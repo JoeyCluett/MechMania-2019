@@ -129,9 +129,37 @@ class Strategy(Game):
         for i in range(3):
             print(self.super_avoid(my_units[i], target))
 
+
         #d[0]["priority"], d[2]["priority"] = d[2]["priority"], d[0]["priority"]
 
         return d
+
+    ########### HELPER FUNCTIONS ###############3
+    # given a player and a target position, find the locations on the board where the player can attack the target
+    def attacking_tiles(self, player, target_pos):
+        all_locs = self.possible_locations(player)
+
+        # figure out possible attacking squares
+        attacking_squares = list()
+        for loc in all_locs:
+            for direction in {"UP", "LEFT", "RIGHT", "DOWN"}:
+                if target_pos in [_[0] for _ in self.get_positions_of_attack_pattern(player.id, direction, loc)]:
+                    attacking_squares.append(loc)
+
+        return attacking_squares
+
+    # given a player, finds all possible locations he can move to
+    def possible_destinations(self, player):
+        pos = (player.pos.x, player.pos.y)
+        map = [[(i, j) for i in range(12)] for j in range(12)]
+
+        # get all possible locations of the bot
+        all_locs = list()
+        for col in map:
+            for row in col:
+                if self.path_to((col, row), pos) is None:
+                    all_locs.append((col, row))
+        return all_locs
 
     # for glass cannon
     def snipe_locations(self, target):
@@ -145,19 +173,7 @@ class Strategy(Game):
 
         return snipe_locations
 
-    def possible_destinations(self, player):
-        pos = (player.pos.x, player.pos.y)
-        map = [[(i, j) for i in range(12)] for j in range(12)]
-
-        # get all possible locations of the bot
-        all_locs = list()
-        for col in map:
-            for row in col:
-                if self.path_to((col, row), pos) is None:
-                    all_locs.append((col, row))
-        return all_locs
-
-    # given character's speed and attack pattern, find all possible attacking_squares
+    # given character's pathing and attack pattern, find all possible attacking_squares
     # NOTE: Best when enemy speed is slow
     def super_attacking_squares(self, target):
         pos = (target.pos.x, target.pos.y)
@@ -167,11 +183,12 @@ class Strategy(Game):
         # figure out possible attacking squares
         attacking_squares = list()
         for loc in all_locs:
-            for direction in {"UP","LEFT","RIGHT","DOWN"}:
-                attacking_squares.extend(self.get_positions_of_attack_pattern(target.id, direction, loc))
+            for direction in {"UP", "LEFT", "RIGHT", "DOWN"}:
+                attacking_squares.extend([_[0] for _ in self.get_positions_of_attack_pattern(target.id, direction, loc)])
 
         return attacking_squares
 
+    # find positions on the board where the player can escape to to AVOID the target at ALL COSTS
     def super_avoid(self, player, target, attacking_squares=None):
         if attacking_squares is None:
             attacking_squares = self.super_attacking_squares(target)
