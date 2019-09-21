@@ -1,6 +1,12 @@
 from API import Game
 
 class Strategy(Game):
+
+    def __init__(self, game_json):        
+        self.STATE = "move_last_player"
+        #self.STATE = "barrage"
+        Game.__init__(self, game_json)
+
     """
         FILL THIS METHOD OUT FOR YOUR BOT:
         Method to set unit initializations. Run at the beginning of a game, after assigning player numbers.
@@ -16,7 +22,8 @@ class Strategy(Game):
         If player_id is 1, UnitIds for the bots should be 1,2,3. If player_id is 2, UnitIds should be 4,5,6
     """
     def get_setup(self):
-        units = [{}, {}, {}]
+
+        units = []
 
         def create_glass_cannon(player_1_team, player_2_team):
             print("creating glass cannon robot")
@@ -26,7 +33,7 @@ class Strategy(Game):
                 [[0] * 7 for j in range(7)]
             atk[3][6] = 5
 
-            gc["speed"] = 6 # zero pts leftover
+            gc["speed"] = 6  # zero pts leftover
             gc["health"] = 1 # needs 0 pts
             gc["attackPattern"] = atk
 
@@ -52,8 +59,8 @@ class Strategy(Game):
 
             u["attackPattern"] = atk
 
-            u["speed"]  = 4 # 4 pts
-            u["health"] = 6 # 9 pts
+            u["speed"]  = 1 #4 # 4 pts
+            u["health"] = 1 #6 # 9 pts
 
             u["unitId"] = player_1_team
             if self.player_id == 2:
@@ -64,36 +71,9 @@ class Strategy(Game):
 
             return u
 
-        """
-        for i in range(3):
-            #unit = {"health": 5, "speed": 5}
-            unit={}
-            
-            unit["health"] = 5 # 6 pts
-            unit["speed"] = 5  # 6 pts
-            atk = \
-                [[0] * 7 for j in range(7)]
-            
-            # if you are player1, unitIds will be 1,2,3. If you are player2, they will be 4,5,6
-            unit["unitId"] = i + 1
-            if self.player_id == 2:
-                unit["unitId"] += 3
-            
-            unit["terrainPattern"] = [[False]*7 for j in range(7)]
-
-            # diamond shape in front of the bot            
-            atk[3][4] = 2
-            atk[3][6] = 2
-            atk[2][4] = 2
-            atk[4][4] = 2
-            unit["attackPattern"] = atk
-
-            units.append(unit)
-        """
-
-        units[0] = create_glass_cannon(1, 4)
-        units[1] = create_balanced(2, 5)
-        units[2] = create_balanced(3, 6)
+        units.append(create_glass_cannon(1, 4)) # units[0]
+        units.append(create_glass_cannon(2, 5)) # units[1]
+        units.append(create_glass_cannon(3, 6)) # units[2] the oddball
 
         return units
 
@@ -109,15 +89,118 @@ class Strategy(Game):
                 "priority": The bots move one at a time, so give the priority which you want them to act in (1,2, or 3)
     """
     def do_turn(self):
-        my_units = self.get_my_units()
-        #decision = [{
+
+        print('Debug: player ' + str(self.player_id))
+
+        if self.STATE == "move_last_player":
+            print("STATE: move_last_player")
+
+            my_units = self.get_my_units()            
+            print('Num units: ' + str(len(my_units)))
+
+            d = [
+            {
+                "priority": 2,
+                "movement": ["STAY"]*my_units[0].speed,
+                "attack": "STAY",
+                "unitId": my_units[0].id
+            },
+            {
+                "priority": 3,
+                "movement": ["STAY"]*my_units[1].speed,
+                "attack": "STAY",
+                "unitId": my_units[1].id
+            }] # need to fill out
+
+            o = {
+                "priority": 1,
+                "attack": "STAY",
+                "unitId": my_units[2].id,
+                "movement": ["STAY"]*my_units[2].speed # default is to stay
+            }
+
+            p = my_units[2].pos
+
+            if(self.player_id == 1):
+                m = self.path_to((p.x, p.y), (6, 6), [])
+                if m != None:
+                    for ind in range(len() if len(m) < my_units[2].speed else my_units[2].speed):
+                        o["movement"][ind] = m[ind]
+            else:
+                m = self.path_to((p.x, p.y), (6, 6), [])
+                if m != None:
+                    for ind in range(len() if len(m) < my_units[2].speed else my_units[2].speed):
+                        o["movement"][ind] = m[ind]
+
+            d.append(o)
+
+            print("d length (expecting 3): " + str(len(d)))
+            self.STATE = "barrage"
+            return d
+
+        elif self.STATE == "barrage":
+            print("STATE: barrage")
+
+            #d = []
+            my_units = self.get_my_units()
+            
+            print("\tunit list len: " + str(len(my_units)))
+
+            if self.player_id == 1:
+                
+                d = [{
+                    "priority": 1,
+                    "movement": ["STAY"]*my_units[0].speed,
+                    "attack": "DOWN",
+                    "unitId": my_units[0].id
+                },
+                {
+                    "priority": 2,
+                    "movement": ["STAY"]*my_units[1].speed,
+                    "attack": "DOWN",
+                    "unitId": my_units[1].id
+                },
+                {
+                    "priority": 3,
+                    "movement": ["STAY"]*my_units[2].speed,
+                    "attack": "DOWN",
+                    "unitId": my_units[2].id
+                }]
+
+                return d
+
+            else:
+                d = [{
+                    "priority": 1,
+                    "movement": ["STAY"]*my_units[0].speed,
+                    "attack": "UP",
+                    "unitId": my_units[0].id
+                },
+                {
+                    "priority": 2,
+                    "movement": ["STAY"]*my_units[1].speed,
+                    "attack": "UP",
+                    "unitId": my_units[1].id
+                },
+                {
+                    "priority": 3,
+                    "movement": ["STAY"]*my_units[2].speed,
+                    "attack": "UP",
+                    "unitId": my_units[2].id
+                }]
+
+                return d
+
+        else:
+            pass
+
+        """
         d = [{
             "priority": i+1,
-            "movement": ["UP"]*my_units[i].speed,
-            "attack": "STAY",
+            "movement": ["STAY"]*my_units[i].speed,
+            "attack": "UP",
             "unitId": my_units[i].id
-            } for i in range(len(my_units))]
-
-        #d[0]["priority"], d[2]["priority"] = d[2]["priority"], d[0]["priority"]
+        } for i in range(len(my_units))]
+        """
 
         return d
