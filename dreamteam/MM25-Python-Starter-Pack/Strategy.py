@@ -1,4 +1,5 @@
 from API import Game
+import copy
 
 class Strategy(Game):
     """
@@ -64,6 +65,7 @@ class Strategy(Game):
 
             return u
 
+
         """
         for i in range(3):
             #unit = {"health": 5, "speed": 5}
@@ -110,6 +112,12 @@ class Strategy(Game):
     """
     def do_turn(self):
         my_units = self.get_my_units()
+        enemy_units = self.get_enemy_units()
+
+        #TODO: Create priority kill system
+        target = enemy_units[0]
+
+        print(self.snipe_locations(target))
         #decision = [{
         d = [{
             "priority": i+1,
@@ -118,6 +126,60 @@ class Strategy(Game):
             "unitId": my_units[i].id
             } for i in range(len(my_units))]
 
+        for i in range(3):
+            print(self.super_avoid(my_units[i], target))
+
         #d[0]["priority"], d[2]["priority"] = d[2]["priority"], d[0]["priority"]
 
         return d
+
+    # for glass cannon
+    def snipe_locations(self, target):
+        target_location = (target.pos.x, target.pos.y)
+        snipe_locations = [(target.pos.x, target.pos.y-3), (target.pos.x, target.pos.y+3),
+                           (target.pos.x-3, target.pos.y), (target.pos.x+3, target.pos.y)]
+
+        for loc in snipe_locations:
+            if self.get_tile_at(loc).type == "INDESTRUCTIBLE":
+                snipe_locations.remove(loc)
+
+        return snipe_locations
+
+    def possible_destinations(self, player):
+        pos = (player.pos.x, player.pos.y)
+        map = [[(i, j) for i in range(12)] for j in range(12)]
+
+        # get all possible locations of the bot
+        all_locs = list()
+        for col in map:
+            for row in col:
+                if self.path_to((col, row), pos) is None:
+                    all_locs.append((col, row))
+        return all_locs
+
+    # given character's speed and attack pattern, find all possible attacking_squares
+    # NOTE: Best when enemy speed is slow
+    def super_attacking_squares(self, target):
+        pos = (target.pos.x, target.pos.y)
+
+        all_locs = self.possible_destinations(target)
+
+        # figure out possible attacking squares
+        attacking_squares = list()
+        for loc in all_locs:
+            for direction in {"UP","LEFT","RIGHT","DOWN"}:
+                attacking_squares.extend(self.get_positions_of_attack_pattern(target.id, direction, loc))
+
+        return attacking_squares
+
+    def super_avoid(self, player, target, attacking_squares=None):
+        if attacking_squares is None:
+            attacking_squares = self.super_attacking_squares(target)
+
+        all_locs = self.possible_destinations(player)
+        possible_locs = copy.copy(all_locs)
+        for sqr in attacking_squares:
+            if sqr in all_locs:
+                possible_locs.remove(sqr)
+
+        return possible_locs
