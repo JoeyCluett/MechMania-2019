@@ -297,6 +297,7 @@ class Strategy(Game):
 
                 d.append(o)
 
+            d = self.clean_final_decision(d)
             print(str(d), file=sys.stderr)
             self.STATE = "barrage"
             return d
@@ -328,6 +329,7 @@ class Strategy(Game):
 
             self.STATE = "move_center"
 
+            d = self.clean_final_decision(d)
             print(str(d), file=sys.stderr)
             return d
 
@@ -379,7 +381,9 @@ class Strategy(Game):
                     #d[ind]["movement"][1] = "UP"
                 d = self.clean_final_decision(d)
                 print(str(d), file=sys.stderr)
-                                
+
+
+                d = self.clean_final_decision(d)
                 #return 1/0
                 return d
 
@@ -423,6 +427,8 @@ class Strategy(Game):
                     "unitId": 2
                 }]
 
+
+                d = self.clean_final_decision(d)
                 print(str(d), file=sys.stderr)
                 self.STATE = "move_scatter"
                 return d
@@ -448,6 +454,7 @@ class Strategy(Game):
                     "unitId": 5
                 }]
 
+                d = self.clean_final_decision(d)
                 print(str(d), file=sys.stderr)
                 self.STATE = "move_scatter"
                 return d
@@ -475,6 +482,8 @@ class Strategy(Game):
                     "unitId": 2
                 }]
 
+
+                d = self.clean_final_decision(d)
                 print(str(d), file=sys.stderr)
                 return d
 
@@ -527,6 +536,7 @@ class Strategy(Game):
                 }]
 
                 self.STATE = "move_wyly_flakbot"
+                d = self.clean_final_decision(d)
                 print(str(d), file=sys.stderr)
                 return d
 
@@ -552,6 +562,7 @@ class Strategy(Game):
                 }]
 
                 self.STATE = "move_wyly_flakbot"
+                d = self.clean_final_decision(d)
                 print(str(d), file=sys.stderr)
                 return d
 
@@ -585,6 +596,7 @@ class Strategy(Game):
                     for i in d:
                         i["movement"] = ["STAY"]
 
+                d = self.clean_final_decision(d)
                 print(str(d), file=sys.stderr)
                 return d
 
@@ -616,12 +628,13 @@ class Strategy(Game):
                     for i in d:
                         i["movement"] = ["STAY"]
 
+                d = self.clean_final_decision(d)
                 print(str(d), file=sys.stderr)
                 return d
         else:
             print('#### Unknown state')
             raise Exception("If you see this message, something went wrong")
-    
+
     def wyly_flakbot_can_move(self, pos, dir):
         if dir == "UP":
             return \
@@ -671,7 +684,7 @@ class Strategy(Game):
             if decision["unitId"] < 1 or decision["unitId"] > 6 or decision["unitId"] in unitIds:
                 clean_error = True
                 print("Invalid unitId. Guessing...", file=sys.stderr)
-                raise Exception(f"dec: {decision} - dec_list: {decision_list}")
+                #raise Exception(f"dec: {decision} - dec_list: {decision_list}")
                 for id in {1, 2, 3}:
                     if self.player_id == 2:
                         id += 3
