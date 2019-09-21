@@ -1,10 +1,19 @@
 from API import Game
 import sys
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5acb2c266f2aab2fd0744afe9aac0fef3d24fdbf
 class Strategy(Game):
 
     def __init__(self, game_json):        
-        self.STATE = "move_last_player"
+        #self.STATE = "move_last_player"
         #self.STATE = "barrage"
+        #self.STATE = "advance_one"
+
+        self.STATE = "prep_scatter"
+
+        self.CURRENT_TURN = 0
         Game.__init__(self, game_json)
 
     """
@@ -26,12 +35,12 @@ class Strategy(Game):
         units = []
 
         def create_glass_cannon(player_1_team, player_2_team):
-            print("creating glass cannon robot")
+            print("creating glass cannon robot", file=sys.stderr)
             gc = {}            
 
             atk = \
                 [[0] * 7 for j in range(7)]
-            atk[3][6] = 5
+            atk[3][6] = 1
 
             gc["speed"] = 6  # zero pts leftover
             gc["health"] = 1 # needs 0 pts
@@ -46,7 +55,7 @@ class Strategy(Game):
             return gc
 
         def create_balanced(player_1_team, player_2_team):
-            print("creating balanced robot")
+            print("creating balanced robot", file=sys.stderr)
             u = {}
 
             # 4 attack (10 pts)
@@ -59,8 +68,8 @@ class Strategy(Game):
 
             u["attackPattern"] = atk
 
-            u["speed"]  = 1 #4 # 4 pts
-            u["health"] = 1 #6 # 9 pts
+            u["speed"]  = 4 # 4 pts
+            u["health"] = 6 # 9 pts
 
             u["unitId"] = player_1_team
             if self.player_id == 2:
@@ -71,9 +80,40 @@ class Strategy(Game):
 
             return u
 
-        units.append(create_glass_cannon(1, 4)) # units[0]
-        units.append(create_glass_cannon(2, 5)) # units[1]
-        units.append(create_glass_cannon(3, 6)) # units[2] the oddball
+        def create_scattershot(player_1_team, player_2_team):
+            print("creating scattershot robot", file=sys.stderr)
+            u = {}
+
+            atk = \
+                [[0] * 7 for j in range(7)]
+            
+            # 9 atk = 9 pts
+            atk[1][4] = 1
+            atk[2][4] = 1
+            atk[3][4] = 1
+            atk[4][4] = 1
+            atk[5][4] = 1
+
+            atk[2][5] = 1
+            atk[3][5] = 1
+            atk[4][5] = 1
+
+            atk[3][6] = 1
+
+            u["attackPattern"] = atk
+            u["speed"]  = 6 # 6 spd = 9 pts
+            u["health"] = 5 # 5 hlth = 6 pts
+            u["terrainPattern"] = [[False]*7 for j in range(7)]
+
+            u["unitId"] = player_1_team
+            if self.player_id == 2:
+                u["unitId"] = player_2_team
+
+            return u
+
+        units.append(create_scattershot(3, 6)) # units[0]
+        units.append(create_scattershot(1, 4)) # units[1]
+        units.append(create_scattershot(2, 5)) # units[2] the oddball
 
         return units
 
@@ -90,15 +130,44 @@ class Strategy(Game):
     """
     def do_turn(self):
 
-        print('Debug: player ' + str(self.player_id))
+        print('Debug: player ' + str(self.player_id), file=sys.stderr)
+        print("    STATE: " + self.STATE, file=sys.stderr)
+        print("    Turn #" + str(self.CURRENT_TURN), file=sys.stderr)
+
+        self.CURRENT_TURN += 1
 
         if self.STATE == "move_last_player":
-            print("STATE: move_last_player")
 
             my_units = self.get_my_units()            
-            print('Num units: ' + str(len(my_units)))
+            #print('Num units: ' + str(len(my_units)))
 
             d = []
+            avoid_list = []
+
+            if True:
+                o = {
+                    "priority": 1,
+                    "attack": "STAY",
+                    "unitId": my_units[2].id,
+                    "movement": ["STAY"]*my_units[2].speed # default is to stay
+                }
+
+                p = my_units[2].pos
+
+                if self.player_id == 1:
+                    m, L = self.clean_path((p.x, p.y), self.path_to((p.x, p.y), (5, 5), []))
+                    avoid_list.append(L)
+                    if m is not None:
+                        for ind in range(min(len(m), my_units[2].speed)):
+                            o["movement"][ind] = m[ind]
+                else:
+                    m, L = self.clean_path((p.x, p.y), self.path_to((p.x, p.y), (6, 6), []))
+                    avoid_list.append(L)
+                    if m is not None:
+                        for ind in range(min(len(m), my_units[2].speed)):
+                            o["movement"][ind] = m[ind]
+
+                d.append(o)
 
             for i in range(2):
 
@@ -109,57 +178,93 @@ class Strategy(Game):
                     "movement": ["STAY"]*my_units[i].speed # default is to stay
                 }
 
-                p = my_units[2-i].pos
+                p = my_units[i].pos
 
                 if(self.player_id == 1):
-                    m, L = self.clean_path((p.x, p.y), self.path_to((p.x, p.y), (5, 5), []), [(5, 5)])
+                    m, L = self.clean_path((p.x, p.y), self.path_to((p.x, p.y), (5, 5), []), avoid_list)
+                    avoid_list.append(L)
                     if m != None:
                         for ind in range(min(len(m), my_units[i].speed)):
                             o["movement"][ind] = m[ind]
                 else:
-                    m, L = self.clean_path((p.x, p.y), self.path_to((p.x, p.y), (6, 6), []), [(6, 6)])
+                    m, L = self.clean_path((p.x, p.y), self.path_to((p.x, p.y), (6, 6), []), avoid_list)
+                    avoid_list.append(L)
                     if m != None:
                         for ind in range(min(len(m), my_units[i].speed)):
                             o["movement"][ind] = m[ind]
 
                 d.append(o)
 
-            if True:
-                o = {
-                    "priority": 1,
-                    "attack": "STAY",
-                    "unitId": my_units[2-i].id,
-                    "movement": ["STAY"]*my_units[2-i].speed # default is to stay
-                }
-
-                p = my_units[2-i].pos
-
-                if self.player_id == 1:
-                    m, L = self.clean_path((p.x, p.y), self.path_to((p.x, p.y), (5, 5), []))
-                    if m is not None:
-                        for ind in range(min(len(m), my_units[2-i].speed)):
-                            o["movement"][ind] = m[ind]
-                else:
-                    m, L = self.clean_path((p.x, p.y), self.path_to((p.x, p.y), (6, 6), []))
-                    if m is not None:
-                        for ind in range(min(len(m), my_units[2-i].speed)):
-                            o["movement"][ind] = m[ind]
-
-                d.append(o)
-
-            print("d length (expecting 3): " + str(len(d)))
+            print(str(d), file=sys.stderr)
             self.STATE = "barrage"
+            return d
+
+        elif self.STATE == "advance_one":
+
+            my_units = self.get_my_units()
+
+            d = [{
+                "priority": i+1,
+                "movement": ["STAY"]*my_units[i].speed,
+                "attack": "STAY",
+                "unitId": 3-i
+            } for i in range(len(my_units))]
+            
+            if self.player_id == 2:
+                for i in range(len(d)):
+                    for j in range(5):
+                        d[i]["movement"][j] = "UP"
+                        #d[i]["movement"][1] = "UP"
+                    d[i]["unitId"] += 3
+                    d[i]["attack"] = "LEFT"
+            else:
+                for i in range(len(d)):
+                    for j in range(5):
+                        d[i]["movement"][j] = "DOWN"
+                        #d[i]["movement"][1] = "DOWN"
+                    d[i]["attack"] = "RIGHT"
+
+            self.STATE = "move_center"
+
+            print(str(d), file=sys.stderr)
+            return d
+
+        elif self.STATE == "move_center":
+
+            my_units = self.get_my_units()
+
+            d = [{
+                "priority": i+1,
+                "movement": ["STAY"]*my_units[i].speed,
+                "attack": "STAY",
+                "unitId": 3-i
+            } for i in range(len(my_units))]
+            
+            if self.player_id == 2:
+                for i in range(len(d)):
+                    for j in range(3):
+                        d[i]["movement"][j] = "LEFT"
+                    d[i]["unitId"] += 3
+                    d[i]["attack"] = "LEFT"
+            else:
+                for i in range(len(d)):
+                    for j in range(3):
+                        d[i]["movement"][j] = "RIGHT"
+                    d[i]["attack"] = "RIGHT"
+
+            self.STATE = "barrage"
+<<<<<<< HEAD
             d = self.clean_final_decision(d)
+=======
+
+            print(str(d), file=sys.stderr)
+>>>>>>> 5acb2c266f2aab2fd0744afe9aac0fef3d24fdbf
             return d
 
         elif self.STATE == "barrage":
-            print("STATE: barrage")
 
-            #d = []
             my_units = self.get_my_units()
             
-            print("\tunit list len: " + str(len(my_units)))
-
             if self.player_id == 1:
                 
                 d = []
@@ -168,11 +273,20 @@ class Strategy(Game):
                     d.append({
                         "priority": ind+1,
                         "movement": ["STAY"]*my_units[ind].speed,
-                        "attack": "DOWN",
+                        "attack": "RIGHT",
                         "unitId": my_units[ind].id
                     })
 
+<<<<<<< HEAD
                 d = self.clean_final_decision(d)
+=======
+                    #d[ind]["movement"][0] = "DOWN"
+                    #d[ind]["movement"][1] = "UP"
+
+                print(str(d), file=sys.stderr)
+                                
+                #return 1/0
+>>>>>>> 5acb2c266f2aab2fd0744afe9aac0fef3d24fdbf
                 return d
 
             else:
@@ -182,15 +296,125 @@ class Strategy(Game):
                     d.append({
                         "priority": ind+1,
                         "movement": ["STAY"]*my_units[ind].speed,
-                        "attack": "UP",
+                        "attack": "LEFT",
                         "unitId": my_units[ind].id
                     })
 
+<<<<<<< HEAD
                 d = self.clean_final_decision(d)
+=======
+                print(str(d), file=sys.stderr)
+                return d
+
+        elif self.STATE == "prep_scatter":
+
+            my_units = self.get_my_units()
+
+            if self.player_id == 1:
+                
+                d = [{
+                    "priority": 1,
+                    "movement": ["DOWN"]*6,
+                    "attack": "DOWN",
+                    "unitId": 3
+                },
+                {
+                    "priority": 2,
+                    "movement": ["DOWN"]*5 + ["STAY"],
+                    "attack": "UP",
+                    "unitId": 1
+                },
+                {
+                    "priority": 3,
+                    "movement": ["DOWN"]*6,
+                    "attack": "RIGHT",
+                    "unitId": 2
+                }]
+
+                print(str(d), file=sys.stderr)
+                self.STATE = "move_scatter"
+                return d
+
+            else:
+
+                d = [{
+                    "priority": 1,
+                    "movement": ["UP"]*6,
+                    "attack": "UP",
+                    "unitId": 6
+                },
+                {
+                    "priority": 2,
+                    "movement": ["UP"]*5 + ["STAY"],
+                    "attack": "DOWN",
+                    "unitId": 4
+                },
+                {
+                    "priority": 3,
+                    "movement": ["UP"]*6,
+                    "attack": "LEFT",
+                    "unitId": 5
+                }]
+
+                print(str(d), file=sys.stderr)
+                self.STATE = "move_scatter"
+                return d
+
+        elif self.STATE == "move_scatter":
+
+            if self.player_id == 1:
+                
+                d = [{
+                    "priority": 1,
+                    "movement": ["RIGHT"] + ["STAY"]*5,
+                    "attack": "DOWN",
+                    "unitId": 3
+                },
+                {
+                    "priority": 2,
+                    "movement": ["RIGHT"] + ["STAY"]*5,
+                    "attack": "UP",
+                    "unitId": 1
+                },
+                {
+                    "priority": 3,
+                    "movement": ["RIGHT"] + ["STAY"]*5,
+                    "attack": "RIGHT",
+                    "unitId": 2
+                }]
+
+                print(str(d), file=sys.stderr)
+                return d
+
+            else:
+
+                d = [{
+                    "priority": 1,
+                    "movement": ["LEFT"] + ["STAY"]*5,
+                    "attack": "UP",
+                    "unitId": 6
+                },
+                {
+                    "priority": 2,
+                    "movement": ["LEFT"] + ["STAY"]*5,
+                    "attack": "DOWN",
+                    "unitId": 4
+                },
+                {
+                    "priority": 3,
+                    "movement": ["LEFT"] + ["STAY"]*5,
+                    "attack": "LEFT",
+                    "unitId": 5
+                }]
+
+                print(str(d), file=sys.stderr)
+>>>>>>> 5acb2c266f2aab2fd0744afe9aac0fef3d24fdbf
                 return d
 
         else:
-            pass
+            print('#### Unknown state')
+
+    
 
     ################### HELPER FUNCTIONS #################
 
@@ -291,10 +515,9 @@ class Strategy(Game):
     def clean_path(self, player_pos, path, friendly_locs=None):
 
         def loc_is_friendly(l):
-            if friendly_locs != None:
-                for loc in friendly_locs:
-                    if loc == l:
-                        return True
+            if friendly_locs != None and not l in friendly_locs:
+                print('\t-- avoiding friendly unit')
+                return True
             return False
         
         c_path = list()
@@ -302,6 +525,7 @@ class Strategy(Game):
         loc = player_pos
         for direction in path:
             if bad is True:
+                print('\t-- waiting, i give up on life')
                 c_path.append("STAY")
                 continue
             if direction == "RIGHT":
@@ -318,10 +542,10 @@ class Strategy(Game):
                         not loc_is_friendly(loc):
                 c_path.append(direction)
             else:
+                print('\t-- staying')
                 c_path.append("STAY")
                 bad = True
         return c_path, loc
-
 
     # given a player, finds all possible locations he can move to
     def possible_destinations(self, player):

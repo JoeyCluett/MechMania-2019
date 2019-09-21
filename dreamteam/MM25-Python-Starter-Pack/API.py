@@ -21,7 +21,7 @@ class Unit:
 
 # Class for a Tile Object
 class Tile:
-    # A Tile will have an id, hp, and type where type is either 'BLANK', 'DESTRUCTIBLE', or 'INDESTRUCTIBLe'
+    # A Tile will have an id, hp, and type where type is either 'BLANK', 'DESTRUCTIBLE', or 'INDESTRUCTIBLE'
     def __init__(self, tile_json):
         self.id = tile_json["id"]
         self.hp = tile_json["hp"]

@@ -20,13 +20,13 @@ class Strategy(Game):
         for i in range(3):
             unit={}
             
-            unit["health"] = 1 # 6 pts
-
-            unit["speed"] = 1  # 6 pts
+            # slow with a ton of health
+            unit["health"] = 9 # 20 pts
+            unit["speed"] = 1  # 0 pts
 
             atk = \
                 [[0] * 7 for j in range(7)]
-            atk[3][6] = 1
+            atk[3][6] = 2
             unit["attackPattern"] = atk
             
             # if you are player1, unitIds will be 1,2,3. If you are player2, they will be 4,5,6
@@ -52,10 +52,11 @@ class Strategy(Game):
     """
     def do_turn(self):
         my_units = self.get_my_units()
+
         d = [{
             "priority": i+1,
-            "movement": ["LEFT"]*my_units[i].speed,
-            "attack": "UP",
+            "movement": ["STAY"]*my_units[i].speed,
+            "attack": "STAY",
             "unitId": my_units[i].id
             } for i in range(len(my_units))]
 
