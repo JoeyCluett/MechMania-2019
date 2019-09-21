@@ -112,12 +112,12 @@ class Strategy(Game):
                 p = my_units[2-i].pos
 
                 if(self.player_id == 1):
-                    m = self.clean_path((p.x, p.y), self.path_to((p.x, p.y), (5, 5), []), [(5, 5)])
+                    m, L = self.clean_path((p.x, p.y), self.path_to((p.x, p.y), (5, 5), []), [(5, 5)])
                     if m != None:
                         for ind in range(min(len(m), my_units[i].speed)):
                             o["movement"][ind] = m[ind]
                 else:
-                    m = self.clean_path((p.x, p.y), self.path_to((p.x, p.y), (6, 6), []), [(6, 6)])
+                    m, L = self.clean_path((p.x, p.y), self.path_to((p.x, p.y), (6, 6), []), [(6, 6)])
                     if m != None:
                         for ind in range(min(len(m), my_units[i].speed)):
                             o["movement"][ind] = m[ind]
@@ -126,7 +126,7 @@ class Strategy(Game):
 
             if True:
                 o = {
-                    "priority": i+1,
+                    "priority": 1,
                     "attack": "STAY",
                     "unitId": my_units[2-i].id,
                     "movement": ["STAY"]*my_units[2-i].speed # default is to stay
@@ -134,14 +134,14 @@ class Strategy(Game):
 
                 p = my_units[2-i].pos
 
-                if(self.player_id == 1):
-                    m = self.clean_path((p.x, p.y), self.path_to((p.x, p.y), (5, 5), [])
-                    if m != None:
+                if self.player_id == 1:
+                    m, L = self.clean_path((p.x, p.y), self.path_to((p.x, p.y), (5, 5), []))
+                    if m is not None:
                         for ind in range(min(len(m), my_units[2-i].speed)):
                             o["movement"][ind] = m[ind]
                 else:
-                    m = self.clean_path((p.x, p.y), self.path_to((p.x, p.y), (6, 6), []))
-                    if m != None:
+                    m, L = self.clean_path((p.x, p.y), self.path_to((p.x, p.y), (6, 6), []))
+                    if m is not None:
                         for ind in range(min(len(m), my_units[2-i].speed)):
                             o["movement"][ind] = m[ind]
 
@@ -180,7 +180,7 @@ class Strategy(Game):
                     d.append({
                         "priority": ind+1,
                         "movement": ["STAY"]*my_units[ind].speed,
-                        "attack": "DOWN",
+                        "attack": "UP",
                         "unitId": my_units[ind].id
                     })
 
@@ -221,7 +221,7 @@ class Strategy(Game):
                     if loc == l:
                         return True
             return False
-                
+        
         c_path = list()
         bad = False
         loc = player_pos
@@ -245,7 +245,7 @@ class Strategy(Game):
             else:
                 c_path.append("STAY")
                 bad = True
-        return c_path
+        return c_path, loc
 
 
     # given a player, finds all possible locations he can move to
