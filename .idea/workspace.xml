@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f8bc6937-1f9f-4140-8853-d0ba9eb02410" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/dreamteam/MM25_Python_Starter_Pack/Strategy.py" afterPath="$PROJECT_DIR$/dreamteam/MM25_Python_Starter_Pack/Strategy.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -40,8 +41,8 @@
       <file leaf-file-name="Strategy.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/dreamteam/MM25_Python_Starter_Pack/Strategy.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="389">
-              <caret line="114" column="9" lean-forward="false" selection-start-line="114" selection-start-column="9" selection-end-line="114" selection-end-column="9" />
+            <state relative-caret-position="177">
+              <caret line="143" column="24" lean-forward="false" selection-start-line="143" selection-start-column="24" selection-end-line="143" selection-end-column="24" />
               <folding>
                 <element signature="e#0#20#0" expanded="true" />
               </folding>
@@ -383,16 +384,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dreamteam/MM25_Python_Starter_Pack/Server.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="36" column="30" lean-forward="false" selection-start-line="36" selection-start-column="29" selection-end-line="36" selection-end-column="30" />
-          <folding>
-            <element signature="e#0#32#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/dreamteam/MM25_Python_Starter_Pack/API.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="374">
@@ -403,10 +394,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/dreamteam/MM25_Python_Starter_Pack/Server.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="36" column="30" lean-forward="false" selection-start-line="36" selection-start-column="29" selection-end-line="36" selection-end-column="30" />
+          <folding>
+            <element signature="e#0#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/dreamteam/MM25_Python_Starter_Pack/Strategy.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="389">
-          <caret line="114" column="9" lean-forward="false" selection-start-line="114" selection-start-column="9" selection-end-line="114" selection-end-column="9" />
+        <state relative-caret-position="177">
+          <caret line="143" column="24" lean-forward="false" selection-start-line="143" selection-start-column="24" selection-end-line="143" selection-end-column="24" />
           <folding>
             <element signature="e#0#20#0" expanded="true" />
           </folding>

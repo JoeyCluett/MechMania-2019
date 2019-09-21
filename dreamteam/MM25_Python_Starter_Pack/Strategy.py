@@ -118,7 +118,7 @@ class Strategy(Game):
         #TODO: Create priority kill system
         target = enemy_units[0]
         attack_path = self.attack_path(my_units[0], (target.pos.x, target.pos.y))
-
+        direction = "STAY"
         #decision = [{
         d = [{
             "priority": i+1,
@@ -128,19 +128,31 @@ class Strategy(Game):
             } for i in range(len(my_units))]
 
         # CHOOSE A PATH
-        if self.player_id == 1:
-            if random.randint(0, 1):
-                path = ["DOWN", "RIGHT", "DOWN", "RIGHT", "DOWN", "RIGHT", "DOWN", "RIGHT","DOWN", "RIGHT"]
+
+        for unit in my_units:
+            for e_unit in enemy_units:
+                # see if can attack
+                attack_path = self.attack_path(unit, (e_unit.pos.x, e_unit.pos.y))
+                if attack_path is not None:
+                    path = attack_path[0]
+                    direction = attack_path[1]
+                    break
             else:
-                path = ["RIGHT", "DOWN", "RIGHT", "DOWN", "RIGHT", "DOWN", "RIGHT", "DOWN", "RIGHT", "DOWN"]
-        elif self.player_id == 2:
-            if random.randint(0, 1):
-                path = ["UP", "LEFT", "UP", "LEFT", "UP", "LEFT", "UP", "LEFT", "UP", "LEFT", "UP", "LEFT"]
-            else:
-                path = ["LEFT", "UP", "LEFT", "UP", "LEFT", "UP", "LEFT", "UP", "LEFT", "UP", "LEFT", "UP"]
-        else:
-            path = None
-            raise Exception("wat")
+                # can't attack, so just move generally towards center
+                if self.player_id == 1:
+                    if random.randint(0, 1):
+                        path = ["DOWN", "RIGHT", "DOWN", "RIGHT", "DOWN", "RIGHT", "DOWN", "RIGHT","DOWN", "RIGHT"]
+                    else:
+                        path = ["RIGHT", "DOWN", "RIGHT", "DOWN", "RIGHT", "DOWN", "RIGHT", "DOWN", "RIGHT", "DOWN"]
+                elif self.player_id == 2:
+                    if random.randint(0, 1):
+                        path = ["UP", "LEFT", "UP", "LEFT", "UP", "LEFT", "UP", "LEFT", "UP", "LEFT", "UP", "LEFT"]
+                    else:
+                        path = ["LEFT", "UP", "LEFT", "UP", "LEFT", "UP", "LEFT", "UP", "LEFT", "UP", "LEFT", "UP"]
+                else:
+                    path = None
+                    raise Exception("wat")
+
         # END CHOOSE A PATH
 
         for z in range(len(my_units)):
@@ -191,7 +203,7 @@ class Strategy(Game):
             return None
         else:
             dest = random.choice(possible_dests)
-            return (self.path_to(player, dest[0]), dest[1])
+            return self.path_to(player, dest[0]), dest[1]
 
     # make sure that the path is clear
     def clean_path(self, player_pos, path):
