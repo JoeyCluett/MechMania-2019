@@ -19,7 +19,7 @@ class Strategy(Game):
     def get_setup(self):
         units = list()
 
-        ################# NO TOUCH BELOW ################################
+        """ NO TOUCH BELOW """
         # generate our units (BASE STUFF THAT HAS TO EXIST)
         for i in range(3):
             unit = dict()
@@ -33,13 +33,13 @@ class Strategy(Game):
         jonah = units[0]
         wyly = units[1]
         obama = units[2]
-        ################# NO TOUCH ABOVE ################################
+        """ NO TOUCH ABOVE """
 
         # set health and speed
         for i in range(3):
             units[i]["health"] = 3
             units[i]["speed"] = 3
-
+        print(unit[0])
         return units
 
     """
@@ -57,37 +57,34 @@ class Strategy(Game):
         my_units = self.get_my_units()
 
         for unit in my_units:
-            if unit.id == 0 or 3:
+            if unit.id == 0 or unit.id == 3:
                 jonah = unit
             elif unit.id == 1 or unit.id == 4:
                 wyly = unit
             else:
                 obama = unit
 
-        decision = list()
+        decisions = list()
 
         jonah_decision = {
-            "priority": 1,
+            "priority": 3,
             "movement": ["DOWN"]*jonah.speed,
-            "attack": "DOWN",
             "unitId": jonah.id
         }
 
         wyly_decision = {
             "priority": 2,
             "movement": ["DOWN"]*wyly.speed,
-            "attack": "DOWN",
             "unitId": wyly.id
         }
 
         obama_decision = {
-            "priority": 3,
+            "priority": 1,
             "movement": ["DOWN"]*obama.speed,
-            "attack": "DOWN",
             "unitId": obama.id
         }
 
-        decision.append(jonah_decision)
-        decision.append(wyly_decision)
-        decision.append(obama_decision)
-        return decision
+        decisions.append(jonah_decision)
+        decisions.append(wyly_decision)
+        decisions.append(obama_decision)
+        return decisions
