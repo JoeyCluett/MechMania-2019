@@ -112,13 +112,11 @@ class Strategy(Game):
                 "priority": The bots move one at a time, so give the priority which you want them to act in (1,2, or 3)
     """
     def do_turn(self):
+        #raise Exception("got this far")
         my_units = self.get_my_units()
         enemy_units = self.get_enemy_units()
         #TODO: Create priority kill system
         target = enemy_units[0]
-        for unit in my_units:
-            if self.get_tile((unit.pos.x, unit.pos.y)).type == "BLANK":
-                raise Exception("Why is a unit position considered empty?")
         attack_path = self.attack_path(my_units[0], (target.pos.x, target.pos.y))
 
         #decision = [{
@@ -146,7 +144,7 @@ class Strategy(Game):
         # END CHOOSE A PATH
 
         for z in range(len(my_units)):
-            d[z]["priority"] = 3-z # reverse priority
+            d[z]["priority"] = z+1 # priority
 
         for z in range(len(my_units)):
             d[z]["movement"] = \
@@ -212,7 +210,8 @@ class Strategy(Game):
                 loc = (loc[0], loc[1]+1)
             elif direction == "DOWN":
                 loc = (loc[0], loc[1]-1)
-            if 0 <= loc[0] <= 11 and 0 <= loc[1] <= 11 and self.get_tile(loc).type == "BLANK":
+            if 0 <= loc[0] <= 11 and 0 <= loc[1] <= 11 and \
+                    self.get_tile(loc).type == "BLANK" and self.get_unit_at(loc) is None:
                 clean_path.append(direction)
             else:
                 clean_path.append("STAY")

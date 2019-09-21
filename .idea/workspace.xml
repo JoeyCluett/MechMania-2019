@@ -16,8 +16,8 @@
       <file leaf-file-name="API.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dreamteam/MM25_Python_Starter_Pack/API.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="395">
-              <caret line="32" column="32" lean-forward="false" selection-start-line="32" selection-start-column="23" selection-end-line="32" selection-end-column="32" />
+            <state relative-caret-position="374">
+              <caret line="112" column="0" lean-forward="true" selection-start-line="112" selection-start-column="0" selection-end-line="112" selection-end-column="0" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
               </folding>
@@ -40,8 +40,8 @@
       <file leaf-file-name="Strategy.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/dreamteam/MM25_Python_Starter_Pack/Strategy.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="528">
-              <caret line="118" column="29" lean-forward="true" selection-start-line="118" selection-start-column="29" selection-end-line="118" selection-end-column="29" />
+            <state relative-caret-position="389">
+              <caret line="114" column="9" lean-forward="false" selection-start-line="114" selection-start-column="9" selection-end-line="114" selection-end-column="9" />
               <folding>
                 <element signature="e#0#20#0" expanded="true" />
               </folding>
@@ -69,10 +69,13 @@
       <find>path_to</find>
       <find>self.path_to</find>
       <find>speed</find>
-      <find>get_tile</find>
       <find>update_game</find>
       <find>blank</find>
+      <find>get_tile</find>
+      <find>clean_path</find>
       <find>game_json</find>
+      <find>raise Exce</find>
+      <find>priority</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -392,8 +395,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/dreamteam/MM25_Python_Starter_Pack/API.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="395">
-          <caret line="32" column="32" lean-forward="false" selection-start-line="32" selection-start-column="23" selection-end-line="32" selection-end-column="32" />
+        <state relative-caret-position="374">
+          <caret line="112" column="0" lean-forward="true" selection-start-line="112" selection-start-column="0" selection-end-line="112" selection-end-column="0" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>
@@ -402,8 +405,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/dreamteam/MM25_Python_Starter_Pack/Strategy.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="528">
-          <caret line="118" column="29" lean-forward="true" selection-start-line="118" selection-start-column="29" selection-end-line="118" selection-end-column="29" />
+        <state relative-caret-position="389">
+          <caret line="114" column="9" lean-forward="false" selection-start-line="114" selection-start-column="9" selection-end-line="114" selection-end-column="9" />
           <folding>
             <element signature="e#0#20#0" expanded="true" />
           </folding>
