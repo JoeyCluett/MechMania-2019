@@ -1,9 +1,7 @@
 from API import Game
+import copy
+import random
 import sys
-<<<<<<< HEAD
-=======
-
->>>>>>> 5acb2c266f2aab2fd0744afe9aac0fef3d24fdbf
 class Strategy(Game):
 
     def __init__(self, game_json):        
@@ -253,12 +251,8 @@ class Strategy(Game):
                     d[i]["attack"] = "RIGHT"
 
             self.STATE = "barrage"
-<<<<<<< HEAD
             d = self.clean_final_decision(d)
-=======
-
             print(str(d), file=sys.stderr)
->>>>>>> 5acb2c266f2aab2fd0744afe9aac0fef3d24fdbf
             return d
 
         elif self.STATE == "barrage":
@@ -277,16 +271,12 @@ class Strategy(Game):
                         "unitId": my_units[ind].id
                     })
 
-<<<<<<< HEAD
-                d = self.clean_final_decision(d)
-=======
                     #d[ind]["movement"][0] = "DOWN"
                     #d[ind]["movement"][1] = "UP"
-
+                d = self.clean_final_decision(d)
                 print(str(d), file=sys.stderr)
                                 
                 #return 1/0
->>>>>>> 5acb2c266f2aab2fd0744afe9aac0fef3d24fdbf
                 return d
 
             else:
@@ -300,9 +290,7 @@ class Strategy(Game):
                         "unitId": my_units[ind].id
                     })
 
-<<<<<<< HEAD
                 d = self.clean_final_decision(d)
-=======
                 print(str(d), file=sys.stderr)
                 return d
 
@@ -407,8 +395,8 @@ class Strategy(Game):
                     "unitId": 5
                 }]
 
+                d = self.clean_final_decision(d)
                 print(str(d), file=sys.stderr)
->>>>>>> 5acb2c266f2aab2fd0744afe9aac0fef3d24fdbf
                 return d
 
         else:
