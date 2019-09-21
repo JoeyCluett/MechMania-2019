@@ -116,15 +116,15 @@ class Strategy(Game):
             atk = \
                 [[0] * 7 for j in range(7)]
             
-            # 8 atk = 9 pts
+            # 8 atk = 12 pts
             atk[3][4] = 2
             atk[2][5] = 2
             atk[4][5] = 2
             atk[3][6] = 2
 
             u["attackPattern"] = atk
-            u["speed"]  = 1 # 6 spd = 9 pts
-            u["health"] = 5 # 5 hlth = 6 pts
+            u["speed"]  = 1 # 1 spd = 0 pts
+            u["health"] = 7 # 7 hlth = 12 pts
             u["terrainPattern"] = [[False]*7 for j in range(7)]
 
             u["unitId"] = player_1_team
@@ -140,15 +140,15 @@ class Strategy(Game):
             atk = \
                 [[0] * 7 for j in range(7)]
             
-            # 8 atk = 9 pts
+            # 8 atk = 12 pts
             atk[3][5] = 2
             atk[2][5] = 2
             atk[4][5] = 2
             atk[3][6] = 2
 
             u["attackPattern"] = atk
-            u["speed"]  = 1 # 6 spd = 9 pts
-            u["health"] = 5 # 5 hlth = 6 pts
+            u["speed"]  = 1 # 1 spd = 0 pts
+            u["health"] = 7 # 7 hlth = 12 pts
             u["terrainPattern"] = [[False]*7 for j in range(7)]
 
             u["unitId"] = player_1_team
@@ -164,7 +164,7 @@ class Strategy(Game):
             atk = \
                 [[0] * 7 for j in range(7)]
             
-            # 8 atk = 9 pts
+            # 8 atk = 12 pts
             atk[2][4] = 2
             atk[2][5] = 2
             atk[4][5] = 2
@@ -188,15 +188,15 @@ class Strategy(Game):
             atk = \
                 [[0] * 7 for j in range(7)]
             
-            # 8 atk = 9 pts
+            # 8 atk = 12 pts
             atk[4][4] = 2
             atk[2][5] = 2
             atk[4][5] = 2
             atk[3][6] = 2
 
             u["attackPattern"] = atk
-            u["speed"]  = 1 # 6 spd = 9 pts
-            u["health"] = 5 # 5 hlth = 6 pts
+            u["speed"]  = 1 # 1 spd = 0 pts
+            u["health"] = 7 # 7 health = 12 pts
             u["terrainPattern"] = [[False]*7 for j in range(7)]
 
             u["unitId"] = player_1_team
