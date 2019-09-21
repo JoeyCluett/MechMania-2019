@@ -98,26 +98,33 @@ class Strategy(Game):
             my_units = self.get_my_units()            
             print('Num units: ' + str(len(my_units)))
 
-            """
-            d = [
-            {
-                "priority": 2,
-                "movement": ["STAY"]*my_units[0].speed,
-                "attack": "STAY",
-                "unitId": my_units[0].id
-            },
-            {
-                "priority": 3,
-                "movement": ["STAY"]*my_units[1].speed,
-                "attack": "STAY",
-                "unitId": my_units[1].id
-            }] # need to fill out
-            """
-
             d = []
 
-            for i in range(3):
+            for i in range(2):
 
+                o = {
+                    "priority": i+2,
+                    "attack": "STAY",
+                    "unitId": my_units[i].id,
+                    "movement": ["STAY"]*my_units[i].speed # default is to stay
+                }
+
+                p = my_units[2-i].pos
+
+                if(self.player_id == 1):
+                    m = self.clean_path((p.x, p.y), self.path_to((p.x, p.y), (5, 5), []), [(5, 5)])
+                    if m != None:
+                        for ind in range(min(len(m), my_units[i].speed)):
+                            o["movement"][ind] = m[ind]
+                else:
+                    m = self.clean_path((p.x, p.y), self.path_to((p.x, p.y), (6, 6), []), [(6, 6)])
+                    if m != None:
+                        for ind in range(min(len(m), my_units[i].speed)):
+                            o["movement"][ind] = m[ind]
+
+                d.append(o)
+
+            if True:
                 o = {
                     "priority": i+1,
                     "attack": "STAY",
@@ -128,12 +135,12 @@ class Strategy(Game):
                 p = my_units[2-i].pos
 
                 if(self.player_id == 1):
-                    m = self.path_to((p.x, p.y), (6, 6), [])
+                    m = self.clean_path((p.x, p.y), self.path_to((p.x, p.y), (5, 5), [])
                     if m != None:
                         for ind in range(min(len(m), my_units[2-i].speed)):
                             o["movement"][ind] = m[ind]
                 else:
-                    m = self.path_to((p.x, p.y), (6, 6), [])
+                    m = self.clean_path((p.x, p.y), self.path_to((p.x, p.y), (6, 6), []))
                     if m != None:
                         for ind in range(min(len(m), my_units[2-i].speed)):
                             o["movement"][ind] = m[ind]
@@ -164,27 +171,6 @@ class Strategy(Game):
                         "unitId": my_units[ind].id
                     })
 
-                """
-                d = [{
-                    "priority": 1,
-                    "movement": ["STAY"]*my_units[0].speed,
-                    "attack": "DOWN",
-                    "unitId": my_units[0].id
-                },
-                {
-                    "priority": 2,
-                    "movement": ["STAY"]*my_units[1].speed,
-                    "attack": "DOWN",
-                    "unitId": my_units[1].id
-                },
-                {
-                    "priority": 3,
-                    "movement": ["STAY"]*my_units[2].speed,
-                    "attack": "DOWN",
-                    "unitId": my_units[2].id
-                }]
-                """
-
                 return d
 
             else:
@@ -197,40 +183,122 @@ class Strategy(Game):
                         "attack": "DOWN",
                         "unitId": my_units[ind].id
                     })
-                
-                """
-                d = [{
-                    "priority": 1,
-                    "movement": ["STAY"]*my_units[0].speed,
-                    "attack": "UP",
-                    "unitId": my_units[0].id
-                },
-                {
-                    "priority": 2,
-                    "movement": ["STAY"]*my_units[1].speed,
-                    "attack": "UP",
-                    "unitId": my_units[1].id
-                },
-                {
-                    "priority": 3,
-                    "movement": ["STAY"]*my_units[2].speed,
-                    "attack": "UP",
-                    "unitId": my_units[2].id
-                }]
-                """
 
                 return d
 
         else:
             pass
 
-        """
-        d = [{
-            "priority": i+1,
-            "movement": ["STAY"]*my_units[i].speed,
-            "attack": "UP",
-            "unitId": my_units[i].id
-        } for i in range(len(my_units))]
-        """
+    # given a player and a target position, find the locations on the board where the player can attack the target
+    def attacking_tiles(self, player, target_pos):
+        all_locs = self.possible_destinations(player)
 
-        return d
+        # figure out possible attacking squares
+        attacking_squares = list()
+        for loc in all_locs:
+            for direction in {"UP", "LEFT", "RIGHT", "DOWN"}:
+                if target_pos in [_[0] for _ in self.get_positions_of_attack_pattern(player.id, direction, loc)]:
+                    attacking_squares.append((loc, direction))
+
+        return attacking_squares
+
+    # get a destination path of up, left, down, right pattern to attack a given target
+    # returns a tuple where dest[0] is the destination path and dest[1] is the attack direction to do
+    def attack_path(self, player, target_pos):
+        possible_dests = self.attacking_tiles(player, target_pos)
+        if possible_dests is None or len(possible_dests) == 0:
+            return None
+        else:
+            dest = random.choice(possible_dests)
+            return (self.path_to(player, dest[0]), dest[1])
+
+    # make sure that the path is clear
+    def clean_path(self, player_pos, path, friendly_locs=None):
+
+        def loc_is_friendly(l):
+            if friendly_locs != None:
+                for loc in friendly_locs:
+                    if loc == l:
+                        return True
+            return False
+                
+        c_path = list()
+        bad = False
+        loc = player_pos
+        for direction in path:
+            if bad is True:
+                c_path.append("STAY")
+                continue
+            if direction == "RIGHT":
+                loc = (loc[0]+1, loc[1])
+            elif direction == "LEFT":
+                loc = (loc[0]-1, loc[1])
+            elif direction == "UP":
+                loc = (loc[0], loc[1]+1)
+            elif direction == "DOWN":
+                loc = (loc[0], loc[1]-1)
+            
+            if 0 <= loc[0] <= 11 and 0 <= loc[1] <= 11 and \
+                    self.get_tile(loc).hp == 0 and self.get_unit_at(loc) is None and \
+                        not loc_is_friendly(loc):
+                c_path.append(direction)
+            else:
+                c_path.append("STAY")
+                bad = True
+        return c_path
+
+
+    # given a player, finds all possible locations he can move to
+    def possible_destinations(self, player):
+        pos = (player.pos.x, player.pos.y)
+        map = [[(i, j) for i in range(12)] for j in range(12)]
+
+        # get all possible locations of the bot
+        all_locs = list()
+        for col in map:
+            for spot in col:
+                path = self.path_to(spot, (player.pos.x, player.pos.y))
+                if path is not None and len(path) > player.speed:
+                    all_locs.append(spot)
+        return all_locs
+
+    # for glass cannon
+    def snipe_locations(self, target):
+        target_location = (target.pos.x, target.pos.y)
+        snipe_locations = [(target.pos.x, target.pos.y-3), (target.pos.x, target.pos.y+3),
+                           (target.pos.x-3, target.pos.y), (target.pos.x+3, target.pos.y)]
+
+        for loc in snipe_locations:
+            print(loc)
+            if self.get_tile(loc).type == "INDESTRUCTIBLE":
+                snipe_locations.remove(loc)
+
+        return snipe_locations
+
+    # given character's pathing and attack pattern, find all possible attacking_squares
+    # NOTE: Best when enemy speed is slow
+    def super_attacking_squares(self, target):
+        pos = (target.pos.x, target.pos.y)
+
+        all_locs = self.possible_destinations(target)
+
+        # figure out possible attacking squares
+        attacking_squares = list()
+        for loc in all_locs:
+            for direction in {"UP", "LEFT", "RIGHT", "DOWN"}:
+                attacking_squares.extend([_[0] for _ in self.get_positions_of_attack_pattern(target.id, direction, loc)])
+
+        return attacking_squares
+
+    # find positions on the board where the player can escape to to AVOID the target at ALL COSTS
+    def super_avoid(self, player, target, attacking_squares=None):
+        if attacking_squares is None:
+            attacking_squares = self.super_attacking_squares(target)
+
+        all_locs = self.possible_destinations(player)
+        possible_locs = copy.copy(all_locs)
+        for sqr in attacking_squares:
+            if sqr in all_locs:
+                possible_locs.remove(sqr)
+
+        return possible_locs
