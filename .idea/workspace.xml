@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f8bc6937-1f9f-4140-8853-d0ba9eb02410" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/dreamteam/MM25_Python_Starter_Pack/Strategy.py" afterPath="$PROJECT_DIR$/dreamteam/MM25_Python_Starter_Pack/Strategy.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -17,9 +16,11 @@
       <file leaf-file-name="Strategy.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/dreamteam/MM25_Python_Starter_Pack/Strategy.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="462">
-              <caret line="80" column="26" lean-forward="false" selection-start-line="80" selection-start-column="26" selection-end-line="80" selection-end-column="26" />
-              <folding />
+            <state relative-caret-position="-420">
+              <caret line="217" column="0" lean-forward="true" selection-start-line="217" selection-start-column="0" selection-end-line="217" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#20#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -27,8 +28,8 @@
       <file leaf-file-name="API.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dreamteam/MM25_Python_Starter_Pack/API.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-66">
-              <caret line="175" column="62" lean-forward="false" selection-start-line="175" selection-start-column="56" selection-end-line="175" selection-end-column="62" />
+            <state relative-caret-position="269">
+              <caret line="165" column="16" lean-forward="false" selection-start-line="165" selection-start-column="8" selection-end-line="165" selection-end-column="16" />
               <folding />
             </state>
           </provider>
@@ -38,11 +39,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>right</find>
-      <find>down</find>
-      <find>enemy</find>
-      <find>position</find>
-      <find>map</find>
       <find>get_position</find>
       <find>attacking_tiles</find>
       <find>self.snipe_</find>
@@ -50,7 +46,6 @@
       <find>for col in</find>
       <find>random.choice</find>
       <find>visited</find>
-      <find>self.path_to</find>
       <find>speed</find>
       <find>update_game</find>
       <find>blank</find>
@@ -63,8 +58,17 @@
       <find>player_id</find>
       <find>hp</find>
       <find>unit</find>
-      <find>path_to</find>
       <find>attack</find>
+      <find>print(</find>
+      <find>&quot;unitid</find>
+      <find>self.path_to</find>
+      <find>get_unit</find>
+      <find>puncher</find>
+      <find>path_to</find>
+      <find>tank</find>
+      <find>(5, 5)</find>
+      <find>d[2]</find>
+      <find>.append</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -87,7 +91,9 @@
     <option name="width" value="1456" />
     <option name="height" value="846" />
   </component>
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
       <flattenPackages />
@@ -103,6 +109,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
       <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
@@ -122,15 +129,10 @@
               <item name="dreamteam" type="462c0819:PsiDirectoryNode" />
               <item name="MM25_Python_Starter_Pack" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="MechMania-2019" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-            </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -497,17 +499,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/dreamteam/MM25_Python_Starter_Pack/API.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-66">
-          <caret line="175" column="62" lean-forward="false" selection-start-line="175" selection-start-column="56" selection-end-line="175" selection-end-column="62" />
+        <state relative-caret-position="269">
+          <caret line="165" column="16" lean-forward="false" selection-start-line="165" selection-start-column="8" selection-end-line="165" selection-end-column="16" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/dreamteam/MM25_Python_Starter_Pack/Strategy.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="462">
-          <caret line="80" column="26" lean-forward="false" selection-start-line="80" selection-start-column="26" selection-end-line="80" selection-end-column="26" />
-          <folding />
+        <state relative-caret-position="-420">
+          <caret line="217" column="0" lean-forward="true" selection-start-line="217" selection-start-column="0" selection-end-line="217" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#20#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
