@@ -98,6 +98,7 @@ class Strategy(Game):
             my_units = self.get_my_units()            
             print('Num units: ' + str(len(my_units)))
 
+            """
             d = [
             {
                 "priority": 2,
@@ -111,28 +112,33 @@ class Strategy(Game):
                 "attack": "STAY",
                 "unitId": my_units[1].id
             }] # need to fill out
+            """
 
-            o = {
-                "priority": 1,
-                "attack": "STAY",
-                "unitId": my_units[2].id,
-                "movement": ["STAY"]*my_units[2].speed # default is to stay
-            }
+            d = []
 
-            p = my_units[2].pos
+            for i in range(3):
 
-            if(self.player_id == 1):
-                m = self.path_to((p.x, p.y), (6, 6), [])
-                if m != None:
-                    for ind in range(min(len(m), my_units[2].speed)):
-                        o["movement"][ind] = m[ind]
-            else:
-                m = self.path_to((p.x, p.y), (6, 6), [])
-                if m != None:
-                    for ind in range(min(len(m), my_units[2].speed)):
-                        o["movement"][ind] = m[ind]
+                o = {
+                    "priority": i+1,
+                    "attack": "STAY",
+                    "unitId": my_units[2-i].id,
+                    "movement": ["STAY"]*my_units[2-i].speed # default is to stay
+                }
 
-            d.append(o)
+                p = my_units[2-i].pos
+
+                if(self.player_id == 1):
+                    m = self.path_to((p.x, p.y), (6, 6), [])
+                    if m != None:
+                        for ind in range(min(len(m), my_units[2-i].speed)):
+                            o["movement"][ind] = m[ind]
+                else:
+                    m = self.path_to((p.x, p.y), (6, 6), [])
+                    if m != None:
+                        for ind in range(min(len(m), my_units[2-i].speed)):
+                            o["movement"][ind] = m[ind]
+
+                d.append(o)
 
             print("d length (expecting 3): " + str(len(d)))
             self.STATE = "barrage"
@@ -148,6 +154,17 @@ class Strategy(Game):
 
             if self.player_id == 1:
                 
+                d = []
+
+                for ind in range(len(my_units)):
+                    d.append({
+                        "priority": ind+1,
+                        "movement": ["STAY"]*my_units[ind].speed,
+                        "attack": "DOWN",
+                        "unitId": my_units[ind].id
+                    })
+
+                """
                 d = [{
                     "priority": 1,
                     "movement": ["STAY"]*my_units[0].speed,
@@ -166,10 +183,22 @@ class Strategy(Game):
                     "attack": "DOWN",
                     "unitId": my_units[2].id
                 }]
+                """
 
                 return d
 
             else:
+                d = []
+
+                for ind in range(len(my_units)):
+                    d.append({
+                        "priority": ind+1,
+                        "movement": ["STAY"]*my_units[ind].speed,
+                        "attack": "DOWN",
+                        "unitId": my_units[ind].id
+                    })
+                
+                """
                 d = [{
                     "priority": 1,
                     "movement": ["STAY"]*my_units[0].speed,
@@ -188,6 +217,7 @@ class Strategy(Game):
                     "attack": "UP",
                     "unitId": my_units[2].id
                 }]
+                """
 
                 return d
 
