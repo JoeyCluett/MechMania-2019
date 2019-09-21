@@ -1,5 +1,5 @@
 from API import Game
-
+import sys
 class Strategy(Game):
 
     def __init__(self, game_json):        
@@ -149,6 +149,7 @@ class Strategy(Game):
 
             print("d length (expecting 3): " + str(len(d)))
             self.STATE = "barrage"
+            d = self.clean_final_decision(d)
             return d
 
         elif self.STATE == "barrage":
@@ -171,6 +172,7 @@ class Strategy(Game):
                         "unitId": my_units[ind].id
                     })
 
+                d = self.clean_final_decision(d)
                 return d
 
             else:
@@ -184,10 +186,83 @@ class Strategy(Game):
                         "unitId": my_units[ind].id
                     })
 
+                d = self.clean_final_decision(d)
                 return d
 
         else:
             pass
+
+    ################### HELPER FUNCTIONS #################
+
+    def clean_final_decision(self, decision_list):
+        clean_error = False
+        my_units = self.get_my_units()
+        if len(decision_list) != len(my_units):
+            clean_error = True
+            print("decision list doesn't match total units!!!!!")
+
+        priorities = list()
+        movements = list()
+        attacks = list()
+        unitIds = list()
+
+        for decision in decision_list:
+            for req in {"priority", "movement", "attack", "unitId"}:
+                if req not in decision:
+                    clean_error = True
+                    print(f"decision {decision} does not have requirement {req}", file=sys.stderr)
+                    break
+
+            # individual cleaning
+            if decision["unitId"] < 1 or decision["unitId"] > 6 or decision["unitId"] in unitIds:
+                clean_error = True
+                print("Invalid unitId. Guessing...", file=sys.stderr)
+                raise Exception(f"dec: {decision} - dec_list: {decision_list}")
+                for id in {1, 2, 3}:
+                    if self.player_id == 2:
+                        id += 3
+                    if id not in unitIds:
+                        decision["unitId"] = id
+                        break
+
+            unit = self.get_unit(decision["unitId"])
+            if unit is None:
+                raise Exception("get unit is hard")
+
+            if decision["priority"] < 1 or len(my_units) < decision["priority"] or decision["priority"] in priorities:
+                clean_error = True
+                #print(f"Invalid priority {decision['priority']} in decision {decision}.", file=sys.stderr)
+                for pri in sorted([i+1 for i in range(len(my_units))]):
+                    if pri not in priorities:
+                        decision["priority"] = pri
+                        print(f"updating priority to be {pri}", file=sys.stderr)
+                        break
+
+            if len(decision["movement"]) < 1 or len(decision["movement"]) > unit.speed:
+                clean_error = True
+                print(f"Invalid movement {decision['movement']} in decision {decision}.", file=sys.stderr)
+                path = ["STAY"]*unit.speed
+                decision["movement"] = path
+
+            if decision["attack"] not in {"LEFT", "RIGHT", "UP", "DOWN", "STAY"}:
+                print(f"Invalid attack {decision['attack']} in decision {decision}.", file=sys.stderr)
+                decision["attack"] = "STAY"
+
+            # group cleaning (and below)
+            priorities.append(decision["priority"])
+            movements.append(decision["movement"])
+            attacks.append(decision["attack"])
+            unitIds.append(decision["unitId"])
+
+        if clean_error:
+            print(f"remaining units: {len(my_units)}", file=sys.stderr)
+            print(f"priorities: {priorities}", file=sys.stderr)
+            print(f"movements: {movements}", file=sys.stderr)
+            print(f"attacks: {attacks}", file=sys.stderr)
+            print(f"unitIds: {unitIds}", file=sys.stderr)
+            print("==========CLEAN ERROR===========", file=sys.stderr)
+
+        return decision_list
 
     # given a player and a target position, find the locations on the board where the player can attack the target
     def attacking_tiles(self, player, target_pos):
