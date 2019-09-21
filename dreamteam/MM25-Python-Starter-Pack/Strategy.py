@@ -8,8 +8,8 @@ class Strategy(Game):
         #self.STATE = "move_last_player"
         #self.STATE = "barrage"
         #self.STATE = "advance_one"
-
-        self.STATE = "prep_scatter"
+        #self.STATE = "prep_scatter"
+        self.STATE = "prep_wyly_flakbot"
 
         self.CURRENT_TURN = 0
         Game.__init__(self, game_json)
@@ -109,9 +109,113 @@ class Strategy(Game):
 
             return u
 
-        units.append(create_scattershot(3, 6)) # units[0]
-        units.append(create_scattershot(1, 4)) # units[1]
-        units.append(create_scattershot(2, 5)) # units[2] the oddball
+        def create_wyly_flakbot(player_1_team, player_2_team):
+            print("creating 'Wyly Flakbot' robot", file=sys.stderr)
+            u = {}
+
+            atk = \
+                [[0] * 7 for j in range(7)]
+            
+            # 8 atk = 9 pts
+            atk[3][4] = 2
+            atk[2][5] = 2
+            atk[4][5] = 2
+            atk[3][6] = 2
+
+            u["attackPattern"] = atk
+            u["speed"]  = 1 # 6 spd = 9 pts
+            u["health"] = 5 # 5 hlth = 6 pts
+            u["terrainPattern"] = [[False]*7 for j in range(7)]
+
+            u["unitId"] = player_1_team
+            if self.player_id == 2:
+                u["unitId"] = player_2_team
+
+            return u
+
+        def create_wyly_flakbot_center(player_1_team, player_2_team):
+            print("creating 'Wyly Flakbot Center' robot", file=sys.stderr)
+            u = {}
+
+            atk = \
+                [[0] * 7 for j in range(7)]
+            
+            # 8 atk = 9 pts
+            atk[3][5] = 2
+            atk[2][5] = 2
+            atk[4][5] = 2
+            atk[3][6] = 2
+
+            u["attackPattern"] = atk
+            u["speed"]  = 1 # 6 spd = 9 pts
+            u["health"] = 5 # 5 hlth = 6 pts
+            u["terrainPattern"] = [[False]*7 for j in range(7)]
+
+            u["unitId"] = player_1_team
+            if self.player_id == 2:
+                u["unitId"] = player_2_team
+
+            return u
+
+        def create_wyly_flakbot_left(player_1_team, player_2_team):
+            print("creating 'Wyly Flakbot Left' robot", file=sys.stderr)
+            u = {}
+
+            atk = \
+                [[0] * 7 for j in range(7)]
+            
+            # 8 atk = 9 pts
+            atk[2][4] = 2
+            atk[2][5] = 2
+            atk[4][5] = 2
+            atk[3][6] = 2
+
+            u["attackPattern"] = atk
+            u["speed"]  = 1 # 6 spd = 9 pts
+            u["health"] = 5 # 5 hlth = 6 pts
+            u["terrainPattern"] = [[False]*7 for j in range(7)]
+
+            u["unitId"] = player_1_team
+            if self.player_id == 2:
+                u["unitId"] = player_2_team
+
+            return u
+
+        def create_wyly_flakbot_right(player_1_team, player_2_team):
+            print("creating 'Wyly Flakbot Right' robot", file=sys.stderr)
+            u = {}
+
+            atk = \
+                [[0] * 7 for j in range(7)]
+            
+            # 8 atk = 9 pts
+            atk[4][4] = 2
+            atk[2][5] = 2
+            atk[4][5] = 2
+            atk[3][6] = 2
+
+            u["attackPattern"] = atk
+            u["speed"]  = 1 # 6 spd = 9 pts
+            u["health"] = 5 # 5 hlth = 6 pts
+            u["terrainPattern"] = [[False]*7 for j in range(7)]
+
+            u["unitId"] = player_1_team
+            if self.player_id == 2:
+                u["unitId"] = player_2_team
+
+            return u
+
+        #units.append(create_scattershot(3, 6)) # units[0]
+        #units.append(create_scattershot(1, 4)) # units[1]
+        #units.append(create_scattershot(2, 5)) # units[2] the oddball
+
+        #units.append(create_wyly_flakbot(1, 4))
+        #units.append(create_wyly_flakbot(2, 5))
+        #units.append(create_wyly_flakbot(3, 6))
+
+        units.append(create_wyly_flakbot_center(1, 4))
+        units.append(create_wyly_flakbot_left(2, 5))
+        units.append(create_wyly_flakbot_right(3, 6))
 
         return units
 
@@ -399,10 +503,148 @@ class Strategy(Game):
                 print(str(d), file=sys.stderr)
                 return d
 
+        elif self.STATE == "prep_wyly_flakbot":
+            
+            if self.player_id == 1:
+                
+                d = [{
+                    "priority": 1,
+                    "movement": ["DOWN"],
+                    "attack": "DOWN",
+                    "unitId": 3
+                },
+                {
+                    "priority": 2,
+                    "movement": ["DOWN"],
+                    "attack": "STAY",
+                    "unitId": 1
+                },
+                {
+                    "priority": 3,
+                    "movement": ["LEFT"],
+                    "attack": "STAY",
+                    "unitId": 2
+                }]
+
+                self.STATE = "move_wyly_flakbot"
+                print(str(d), file=sys.stderr)
+                return d
+
+            else:
+
+                d = [{
+                    "priority": 1,
+                    "movement": ["UP"],
+                    "attack": "STAY",
+                    "unitId": 6
+                },
+                {
+                    "priority": 2,
+                    "movement": ["UP"],
+                    "attack": "STAY",
+                    "unitId": 4
+                },
+                {
+                    "priority": 3,
+                    "movement": ["RIGHT"],
+                    "attack": "STAY",
+                    "unitId": 5
+                }]
+
+                self.STATE = "move_wyly_flakbot"
+                print(str(d), file=sys.stderr)
+                return d
+
+        elif self.STATE == "move_wyly_flakbot":
+
+            if self.player_id == 1:
+
+                d = [{
+                    "priority": 2,
+                    "movement": ["RIGHT"],
+                    "attack": "RIGHT",
+                    "unitId": 3
+                },
+                {
+                    "priority": 1,
+                    "movement": ["RIGHT"],
+                    "attack": "RIGHT",
+                    "unitId": 1
+                },
+                {
+                    "priority": 3,
+                    "movement": ["RIGHT"],
+                    "attack": "RIGHT",
+                    "unitId": 2
+                }]
+                
+                if not self.wyly_flakbot_can_move((), "RIGHT"):
+                    d[0]["attack"] = "UP"
+                    d[2]["attack"] = "DOWN"
+
+                    for i in d:
+                        i["movement"] = ["STAY"]
+
+                print(str(d), file=sys.stderr)
+                return d
+
+            else:
+                
+                d = [{
+                    "priority": 2,
+                    "movement": ["LEFT"],
+                    "attack": "LEFT",
+                    "unitId": 6
+                },
+                {
+                    "priority": 1,
+                    "movement": ["LEFT"],
+                    "attack": "LEFT",
+                    "unitId": 4
+                },
+                {
+                    "priority": 3,
+                    "movement": ["LEFT"],
+                    "attack": "LEFT",
+                    "unitId": 5
+                }]
+
+                if not self.wyly_flakbot_can_move((), "LEFT"):
+                    d[0]["attack"] = "DOWN"
+                    d[2]["attack"] = "UP"
+
+                    for i in d:
+                        i["movement"] = ["STAY"]
+
+                print(str(d), file=sys.stderr)
+                return d
         else:
             print('#### Unknown state')
-
+            raise Exception("If you see this message, something went wrong")
     
+    def wyly_flakbot_can_move(self, pos, dir):
+        if dir == "UP":
+            return \
+                self.get_unit_at((pos[0]-1, pos[1]+1)) is None and \
+                self.get_unit_at((pos[0], pos[1]+1)) is None and \
+                self.get_unit_at((pos[0]+1, pos[1]+1)) is None
+        elif dir == "LEFT":
+            return \
+                self.get_unit_at((pos[0]-1, pos[1]+1)) is None and \
+                self.get_unit_at((pos[0]-1, pos[1]+0)) is None and \
+                self.get_unit_at((pos[0]-1, pos[1]-1)) is None
+        elif dir == "RIGHT":
+            return \
+                self.get_unit_at((pos[0]+1, pos[1]+1)) is None and \
+                self.get_unit_at((pos[0]+1, pos[1]+0)) is None and \
+                self.get_unit_at((pos[0]+1, pos[1]-1)) is None
+        elif dir == "DOWN":
+            return \
+                self.get_unit_at((pos[0]-1, pos[1]-1)) is None and \
+                self.get_unit_at((pos[0]+0, pos[1]-1)) is None and \
+                self.get_unit_at((pos[0]+1, pos[1]-1)) is None
+        else:
+            raise Exception("you shouldn't be here")
 
     ################### HELPER FUNCTIONS #################
 
