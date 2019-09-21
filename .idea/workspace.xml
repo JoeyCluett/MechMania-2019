@@ -2,7 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f8bc6937-1f9f-4140-8853-d0ba9eb02410" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/dreamteam/MM25-Python-Starter-Pack/Strategy.py" afterPath="$PROJECT_DIR$/dreamteam/MM25-Python-Starter-Pack/Strategy.py" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/dreamteam/MM25-Python-Starter-Pack/.dockerignore" afterPath="$PROJECT_DIR$/dreamteam/MM25_Python_Starter_Pack/.dockerignore" />
+      <change beforePath="$PROJECT_DIR$/dreamteam/MM25-Python-Starter-Pack/API.py" afterPath="$PROJECT_DIR$/dreamteam/MM25_Python_Starter_Pack/API.py" />
+      <change beforePath="$PROJECT_DIR$/dreamteam/MM25-Python-Starter-Pack/Dockerfile" afterPath="$PROJECT_DIR$/dreamteam/MM25_Python_Starter_Pack/Dockerfile" />
+      <change beforePath="$PROJECT_DIR$/dreamteam/MM25-Python-Starter-Pack/README.md" afterPath="$PROJECT_DIR$/dreamteam/MM25_Python_Starter_Pack/README.md" />
+      <change beforePath="$PROJECT_DIR$/dreamteam/MM25-Python-Starter-Pack/Server.py" afterPath="$PROJECT_DIR$/dreamteam/MM25_Python_Starter_Pack/Server.py" />
+      <change beforePath="$PROJECT_DIR$/dreamteam/MM25-Python-Starter-Pack/Strategy.py" afterPath="$PROJECT_DIR$/dreamteam/MM25_Python_Starter_Pack/Strategy.py" />
+      <change beforePath="$PROJECT_DIR$/dreamteam/MM25-Python-Starter-Pack/mm.json" afterPath="$PROJECT_DIR$/dreamteam/MM25_Python_Starter_Pack/mm.json" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -14,10 +21,10 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
       <file leaf-file-name="API.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dreamteam/MM25-Python-Starter-Pack/API.py">
+        <entry file="file://$PROJECT_DIR$/dreamteam/MM25_Python_Starter_Pack/API.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1902">
-              <caret line="122" column="7" lean-forward="true" selection-start-line="122" selection-start-column="7" selection-end-line="122" selection-end-column="7" />
+            <state relative-caret-position="2730">
+              <caret line="133" column="23" lean-forward="false" selection-start-line="133" selection-start-column="16" selection-end-line="133" selection-end-column="23" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
               </folding>
@@ -25,25 +32,25 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Strategy.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/dreamteam/MM25-Python-Starter-Pack/Strategy.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="435">
-              <caret line="130" column="0" lean-forward="true" selection-start-line="130" selection-start-column="0" selection-end-line="130" selection-end-column="0" />
-              <folding>
-                <element signature="e#0#20#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="Server.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dreamteam/MM25-Python-Starter-Pack/Server.py">
+        <entry file="file://$PROJECT_DIR$/dreamteam/MM25_Python_Starter_Pack/Server.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="0">
               <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding>
                 <element signature="e#0#32#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Strategy.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/dreamteam/MM25_Python_Starter_Pack/Strategy.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="336">
+              <caret line="131" column="31" lean-forward="true" selection-start-line="131" selection-start-column="31" selection-end-line="131" selection-end-column="31" />
+              <folding>
+                <element signature="e#0#20#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -59,7 +66,15 @@
       <find>enemy</find>
       <find>position</find>
       <find>map</find>
+      <find>get_position</find>
+      <find>attacking_tiles</find>
       <find>path_to</find>
+      <find>self.snipe_</find>
+      <find>get_tile</find>
+      <find>possible_locations</find>
+      <find>for col in</find>
+      <find>random.choice</find>
+      <find>visited</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -72,6 +87,7 @@
         <option value="$PROJECT_DIR$/Server.py" />
         <option value="$PROJECT_DIR$/Strategy.py" />
         <option value="$PROJECT_DIR$/dreamteam/MM25-Python-Starter-Pack/Strategy.py" />
+        <option value="$PROJECT_DIR$/dreamteam/MM25_Python_Starter_Pack/Strategy.py" />
       </list>
     </option>
   </component>
@@ -114,7 +130,7 @@
               <item name="MechMania-2019" type="b2602c69:ProjectViewProjectNode" />
               <item name="MechMania-2019" type="462c0819:PsiDirectoryNode" />
               <item name="dreamteam" type="462c0819:PsiDirectoryNode" />
-              <item name="MM25-Python-Starter-Pack" type="462c0819:PsiDirectoryNode" />
+              <item name="MM25_Python_Starter_Pack" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="MechMania-2019" type="b2602c69:ProjectViewProjectNode" />
@@ -366,7 +382,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dreamteam/MM25-Python-Starter-Pack/Server.py">
+    <entry file="file://$PROJECT_DIR$/dreamteam/MM25_Python_Starter_Pack/Server.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -376,20 +392,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dreamteam/MM25-Python-Starter-Pack/API.py">
+    <entry file="file://$PROJECT_DIR$/dreamteam/MM25_Python_Starter_Pack/API.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1902">
-          <caret line="122" column="7" lean-forward="true" selection-start-line="122" selection-start-column="7" selection-end-line="122" selection-end-column="7" />
+        <state relative-caret-position="2730">
+          <caret line="133" column="23" lean-forward="false" selection-start-line="133" selection-start-column="16" selection-end-line="133" selection-end-column="23" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dreamteam/MM25-Python-Starter-Pack/Strategy.py">
+    <entry file="file://$PROJECT_DIR$/dreamteam/MM25_Python_Starter_Pack/Strategy.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="130" column="0" lean-forward="true" selection-start-line="130" selection-start-column="0" selection-end-line="130" selection-end-column="0" />
+        <state relative-caret-position="336">
+          <caret line="131" column="31" lean-forward="true" selection-start-line="131" selection-start-column="31" selection-end-line="131" selection-end-column="31" />
           <folding>
             <element signature="e#0#20#0" expanded="true" />
           </folding>

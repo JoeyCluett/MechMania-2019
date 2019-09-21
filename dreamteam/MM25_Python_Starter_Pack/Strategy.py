@@ -1,7 +1,9 @@
 from API import Game
 import copy
+import random
 
 class Strategy(Game):
+
     """
         FILL THIS METHOD OUT FOR YOUR BOT:
         Method to set unit initializations. Run at the beginning of a game, after assigning player numbers.
@@ -117,7 +119,8 @@ class Strategy(Game):
         #TODO: Create priority kill system
         target = enemy_units[0]
 
-        print(self.snipe_locations(target))
+        attack_path = self.attack_path(my_units[0], (target.pos.x, target.pos.y))
+
         #decision = [{
         d = [{
             "priority": i+1,
@@ -126,27 +129,39 @@ class Strategy(Game):
             "unitId": my_units[i].id
             } for i in range(len(my_units))]
 
-        for i in range(3):
-            print(self.super_avoid(my_units[i], target))
-
+        if attack_path is not None:
+            path, direction = attack_path
+            d[0]["movement"] = path
+            d[0]["attack"] = direction
 
         #d[0]["priority"], d[2]["priority"] = d[2]["priority"], d[0]["priority"]
 
         return d
 
-    ########### HELPER FUNCTIONS ###############3
+    ########### HELPER FUNCTIONS ###############
+
     # given a player and a target position, find the locations on the board where the player can attack the target
     def attacking_tiles(self, player, target_pos):
-        all_locs = self.possible_locations(player)
+        all_locs = self.possible_destinations(player)
 
         # figure out possible attacking squares
         attacking_squares = list()
         for loc in all_locs:
             for direction in {"UP", "LEFT", "RIGHT", "DOWN"}:
                 if target_pos in [_[0] for _ in self.get_positions_of_attack_pattern(player.id, direction, loc)]:
-                    attacking_squares.append(loc)
+                    attacking_squares.append((loc, direction))
 
         return attacking_squares
+
+    # get a destination path of up, left, down, right pattern to attack a given target
+    # returns a tuple where dest[0] is the destination path and dest[1] is the attack direction to do
+    def attack_path(self, player, target_pos):
+        possible_dests = self.attacking_tiles(player, target_pos)
+        if possible_dests is None or len(possible_dests) == 0:
+            return None
+        else:
+            dest = random.choice(possible_dests)
+            return (self.path_to(player, dest[0]), dest[1])
 
     # given a player, finds all possible locations he can move to
     def possible_destinations(self, player):
@@ -156,9 +171,9 @@ class Strategy(Game):
         # get all possible locations of the bot
         all_locs = list()
         for col in map:
-            for row in col:
-                if self.path_to((col, row), pos) is None:
-                    all_locs.append((col, row))
+            for spot in col:
+                if self.path_to(spot, (player.pos.x, player.pos.y)) is None:
+                    all_locs.append(spot)
         return all_locs
 
     # for glass cannon
@@ -168,7 +183,8 @@ class Strategy(Game):
                            (target.pos.x-3, target.pos.y), (target.pos.x+3, target.pos.y)]
 
         for loc in snipe_locations:
-            if self.get_tile_at(loc).type == "INDESTRUCTIBLE":
+            print(loc)
+            if self.get_tile(loc).type == "INDESTRUCTIBLE":
                 snipe_locations.remove(loc)
 
         return snipe_locations
