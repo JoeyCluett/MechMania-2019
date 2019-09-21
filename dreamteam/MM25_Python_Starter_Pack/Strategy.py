@@ -137,9 +137,12 @@ class Strategy(Game):
             units.append(unit)
         """
 
-        units[0] = create_glass_cannon(1, 4)
-        units[2] = create_balanced(2, 5)
-        units[1] = create_tank(3, 6)
+        #units[0] = create_glass_cannon(1, 4)
+        #units[2] = create_balanced(2, 5)
+        #units[1] = create_tank(3, 6)
+        units[0] = create_tank(1, 4)
+        units[1] = create_tank(2, 5)
+        units[2] = create_tank(3, 6)
         return units
 
     """
@@ -214,46 +217,13 @@ class Strategy(Game):
 
         #d[0]["priority"], d[2]["priority"] = d[2]["priority"], d[0]["priority"]
 
-        # TANK CONTROL #
-
+        my_units = self.get_my_units()
         for unit in my_units:
-            if unit.id == 3 or unit.id == 6:
+            # TANK CONTROL #
+            if (unit.id == 1 or unit.id == 4) or (unit.id == 2 or unit.id == 3) or (unit.id == 3 or unit.id == 6):
                 tank = unit
-                break
-        else:
-            tank = None
-        if tank is None:
-            print("Tank is dead. Long live the rest of the team", file=sys.stderr)
-            """print("Tank missing?? Running diagnostics...", file=sys.stderr)
-            print(f"units: {self.get_my_units()}", file=sys.stderr)
-            for i in range(1, 7):
-                try:
-                    print(f"Unit {i}: {self.get_unit(i)}", file=sys.stderr)
-                except:
-                    print(f"Unit {i} unavailable.", file=sys.stderr)
-            """
-        else:
-            tank_camp = (5, 5) if self.player_id == 1 else (6, 6)
-            tank_path = self.path_to((tank.pos.x, tank.pos.y), tank_camp)
-
-            if tank_path is None or len(tank_path) == 0:
-                tank_path = ["STAY"]*tank.speed
-            else:
-                if len(tank_path) < tank.speed:
-                    tank_path.extend(["STAY"]*(len(tank_path) - tank.speed))
-                else:
-                    tank_path = tank_path[:tank.speed]
-                # print(self.path_to((tank.pos.x, tank.pos.y), tank_camp), file=sys.stderr)
-
-            tank_direction = "RIGHT" if self.player_id == 1 else "LEFT"
-            decision = {
-                "priority": 3,
-                "movement": tank_path,
-                "attack": ("STAY" if (tank.pos.x, tank.pos.y) == tank_camp else tank_direction),
-                "unitId": tank.id
-            }
-            print(f"tank id: {tank.id}")
-            d[len(my_units)-1] = decision
+                decision = self.decision_tank(tank)
+                d[(unit.id%3)] = decision
 
         # print(f"FINAL DECISION: {d}", file=sys.stderr)
         return self.clean_final_decision(d)
@@ -287,6 +257,56 @@ class Strategy(Game):
             "movement": self.path_to((puncher.pos.x, puncher.pos.y), )
         }
 
+    # returns a decision for the tank
+    def decision_tank(self, tank, tank_camps=None):
+        if tank_camps is None:
+            tank_camps = list()
+
+        if tank is None:
+            print("Tank is dead. Long live the rest of the team", file=sys.stderr)
+            """print("Tank missing?? Running diagnostics...", file=sys.stderr)
+            print(f"units: {self.get_my_units()}", file=sys.stderr)
+            for i in range(1, 7):
+                try:
+                    print(f"Unit {i}: {self.get_unit(i)}", file=sys.stderr)
+                except:
+                    print(f"Unit {i} unavailable.", file=sys.stderr)
+            """
+        else:
+            camp_1 = (5, 5) if self.player_id == 1 else (6, 6)
+            camp_2 = (5, 7) if self.player_id == 1 else (6, 4)
+            camp_3 = (3, 4) if self.player_id == 1 else (8, 7)
+            camp_possibilities = {camp_1, camp_2, camp_3}
+            tank_camp = None
+            for camp in camp_possibilities:
+                if camp not in tank_camps:
+                    tank_camp = camp
+                    tank_camps.append(tank_camp)
+                    break
+
+            if tank_camp is None:
+                print("Camp is invalid? Shouldn't be...", file=sys.stderr)
+
+            tank_path = self.path_to((tank.pos.x, tank.pos.y), tank_camp)
+
+            if tank_path is None or len(tank_path) == 0:
+                tank_path = ["STAY"] * tank.speed
+            else:
+                if len(tank_path) < tank.speed:
+                    tank_path.extend(["STAY"] * (len(tank_path) - tank.speed))
+                else:
+                    tank_path = tank_path[:tank.speed]
+                # print(self.path_to((tank.pos.x, tank.pos.y), tank_camp), file=sys.stderr)
+
+            tank_direction = "RIGHT" if self.player_id == 1 else "LEFT"
+            decision = {
+                "priority": 3,
+                "movement": tank_path,
+                "attack": ("STAY" if (tank.pos.x, tank.pos.y) == tank_camp else tank_direction),
+                "unitId": tank.id
+            }
+            print(f"tank id: {tank.id}")
+            return decision
     ########### HELPER FUNCTIONS ###############
 
     def clean_final_decision(self, decision_list):
@@ -309,7 +329,7 @@ class Strategy(Game):
                     break
 
             # individual cleaning
-            if decision["unitId"] < 1 or decision["unitId"] > 6:
+            if decision["unitId"] < 1 or decision["unitId"] > 6 or decision["unitId"] in unitIds:
                 clean_error = True
                 print("Invalid unitId. Guessing...", file=sys.stderr)
                 for id in {1, 2, 3}:
@@ -323,7 +343,7 @@ class Strategy(Game):
             if unit is None:
                 raise Exception("get unit is hard")
 
-            if decision["priority"] < 1 or len(my_units) < decision["priority"]:
+            if decision["priority"] < 1 or len(my_units) < decision["priority"] or decision["priority"] in priorities:
                 clean_error = True
                 print(f"Invalid priority {decision['priority']} in decision {decision}.", file=sys.stderr)
                 for pri in {1, 2, 3}:
@@ -347,6 +367,7 @@ class Strategy(Game):
             movements.append(decision["movement"])
             attacks.append(decision["attack"])
             unitIds.append(decision["unitId"])
+
 
         print(f"priorities: {priorities}", file=sys.stderr)
         print(f"movements: {movements}", file=sys.stderr)
