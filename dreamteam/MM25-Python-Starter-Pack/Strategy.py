@@ -124,12 +124,12 @@ class Strategy(Game):
             if(self.player_id == 1):
                 m = self.path_to((p.x, p.y), (6, 6), [])
                 if m != None:
-                    for ind in range(len() if len(m) < my_units[2].speed else my_units[2].speed):
+                    for ind in range(min(len(m), my_units[2].speed)):
                         o["movement"][ind] = m[ind]
             else:
                 m = self.path_to((p.x, p.y), (6, 6), [])
                 if m != None:
-                    for ind in range(len() if len(m) < my_units[2].speed else my_units[2].speed):
+                    for ind in range(min(len(m), my_units[2].speed)):
                         o["movement"][ind] = m[ind]
 
             d.append(o)
