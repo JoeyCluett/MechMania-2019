@@ -19,6 +19,7 @@ class Strategy(Game):
     def get_setup(self):
         units = list()
 
+        ################# NO TOUCH BELOW ################################
         # generate our units (BASE STUFF THAT HAS TO EXIST)
         for i in range(3):
             unit = dict()
@@ -29,10 +30,10 @@ class Strategy(Game):
                 unit["unitId"] = i+4
             unit["terrainPattern"] = [[False]*7 for _ in range(7)]
             units.append(unit)
-
         jonah = units[0]
         wyly = units[1]
         obama = units[2]
+        ################# NO TOUCH ABOVE ################################
 
         # set health and speed
         for i in range(3):
