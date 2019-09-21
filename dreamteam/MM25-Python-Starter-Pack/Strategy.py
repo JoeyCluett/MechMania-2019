@@ -570,31 +570,39 @@ class Strategy(Game):
 
             if self.player_id == 1:
 
-                d = [{
-                    "priority": 2,
-                    "movement": ["RIGHT"],
-                    "attack": "RIGHT",
-                    "unitId": 3
-                },
-                {
-                    "priority": 1,
-                    "movement": ["RIGHT"],
-                    "attack": "RIGHT",
-                    "unitId": 1
-                },
-                {
-                    "priority": 3,
-                    "movement": ["RIGHT"],
-                    "attack": "RIGHT",
-                    "unitId": 2
-                }]
-                
-                if not self.wyly_flakbot_can_move((), "RIGHT"):
-                    d[0]["attack"] = "UP"
-                    d[2]["attack"] = "DOWN"
+                d = []
+                current_priority = 1
+                priority_list = [ 1, 3, 2 ]
 
-                    for i in d:
-                        i["movement"] = ["STAY"]
+                for ind in priority_list:
+                    if self.get_unit(ind) is not None:
+                        d.append({
+                            "priority": current_priority,
+                            "movement": ["RIGHT"],
+                            "attack": "RIGHT",
+                            "unitId": ind
+                        })
+                        current_priority += 1
+
+                pos = (-1, -1)
+                for bot in self.get_my_units():
+                    if bot.id == 1:
+                        pos = (bot.pos.x, bot.pos.y)
+                    elif bot.id == 3:
+                        pos = (bot.pos.x, bot.pos.y-1)
+                    elif bot.id == 2:
+                        pos = (bot.pos.x, bot.pos.y+1)
+
+                if not self.wyly_flakbot_can_move(pos, "RIGHT"):
+
+                    for ind in d:
+                        if ind["unitId"] == 3:
+                            ind["attack"] = "UP"
+
+                        if ind["unitId"] == 2:
+                            ind["attack"] = "DOWN"
+
+                        ind["movement"] = ["STAY"]
 
                 d = self.clean_final_decision(d)
                 print(str(d), file=sys.stderr)
@@ -602,31 +610,39 @@ class Strategy(Game):
 
             else:
                 
-                d = [{
-                    "priority": 2,
-                    "movement": ["LEFT"],
-                    "attack": "LEFT",
-                    "unitId": 6
-                },
-                {
-                    "priority": 1,
-                    "movement": ["LEFT"],
-                    "attack": "LEFT",
-                    "unitId": 4
-                },
-                {
-                    "priority": 3,
-                    "movement": ["LEFT"],
-                    "attack": "LEFT",
-                    "unitId": 5
-                }]
+                d = []
+                current_priority = 1
+                priority_list = [ 4, 6, 5 ]
 
-                if not self.wyly_flakbot_can_move((), "LEFT"):
-                    d[0]["attack"] = "DOWN"
-                    d[2]["attack"] = "UP"
+                for ind in priority_list:
+                    if self.get_unit(ind) is not None:
+                        d.append({
+                            "priority": current_priority,
+                            "movement": ["LEFT"],
+                            "attack": "LEFT",
+                            "unitId": ind
+                        })
+                        current_priority += 1
 
-                    for i in d:
-                        i["movement"] = ["STAY"]
+                pos = (-1, -1)
+                for bot in self.get_my_units():
+                    if bot.id == 4:
+                        pos = (bot.pos.x, bot.pos.y)
+                    elif bot.id == 6:
+                        pos = (bot.pos.x, bot.pos.y-1)
+                    elif bot.id == 5:
+                        pos = (bot.pos.x, bot.pos.y+1)
+
+                if not self.wyly_flakbot_can_move(pos, "LEFT"):
+
+                    for ind in d:
+                        if ind["unitId"] == 6:
+                            ind["attack"] = "DOWN"
+
+                        if ind["unitId"] == 5:
+                            ind["attack"] = "UP"
+
+                        ind["movement"] = ["STAY"]
 
                 d = self.clean_final_decision(d)
                 print(str(d), file=sys.stderr)
@@ -639,23 +655,35 @@ class Strategy(Game):
         if dir == "UP":
             return \
                 self.get_unit_at((pos[0]-1, pos[1]+1)) is None and \
-                self.get_unit_at((pos[0], pos[1]+1)) is None and \
-                self.get_unit_at((pos[0]+1, pos[1]+1)) is None
+                self.get_unit_at((pos[0]+0, pos[1]+1)) is None and \
+                self.get_unit_at((pos[0]+1, pos[1]+1)) is None and \
+                self.get_tile((pos[0]-1, pos[1]+1)).hp == 0 and \
+                self.get_tile((pos[0]+0, pos[1]+1)).hp == 0 and \
+                self.get_tile((pos[0]+1, pos[1]+1)).hp == 0
         elif dir == "LEFT":
             return \
                 self.get_unit_at((pos[0]-1, pos[1]+1)) is None and \
                 self.get_unit_at((pos[0]-1, pos[1]+0)) is None and \
-                self.get_unit_at((pos[0]-1, pos[1]-1)) is None
+                self.get_unit_at((pos[0]-1, pos[1]-1)) is None and \
+                self.get_tile((pos[0]-1, pos[1]+1)).hp == 0 and \
+                self.get_tile((pos[0]-1, pos[1]+0)).hp == 0 and \
+                self.get_tile((pos[0]-1, pos[1]-1)).hp == 0
         elif dir == "RIGHT":
             return \
                 self.get_unit_at((pos[0]+1, pos[1]+1)) is None and \
                 self.get_unit_at((pos[0]+1, pos[1]+0)) is None and \
-                self.get_unit_at((pos[0]+1, pos[1]-1)) is None
+                self.get_unit_at((pos[0]+1, pos[1]-1)) is None and \
+                self.get_tile((pos[0]+1, pos[1]+1)).hp == 0 and \
+                self.get_tile((pos[0]+1, pos[1]+0)).hp == 0 and \
+                self.get_tile((pos[0]+1, pos[1]-1)).hp == 0
         elif dir == "DOWN":
             return \
                 self.get_unit_at((pos[0]-1, pos[1]-1)) is None and \
                 self.get_unit_at((pos[0]+0, pos[1]-1)) is None and \
-                self.get_unit_at((pos[0]+1, pos[1]-1)) is None
+                self.get_unit_at((pos[0]+1, pos[1]-1)) is None and \
+                self.get_tile((pos[0]-1, pos[1]-1)).hp == 0 and \
+                self.get_tile((pos[0]+0, pos[1]-1)).hp == 0   and \
+                self.get_tile((pos[0]+1, pos[1]-1)).hp == 0
         else:
             raise Exception("you shouldn't be here")
 
