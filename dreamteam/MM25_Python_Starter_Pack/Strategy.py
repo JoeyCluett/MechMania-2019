@@ -98,7 +98,6 @@ class Strategy(Game):
         units[0] = create_glass_cannon(1, 4)
         units[1] = create_balanced(2, 5)
         units[2] = create_balanced(3, 6)
-
         return units
 
     """
@@ -115,24 +114,57 @@ class Strategy(Game):
     def do_turn(self):
         my_units = self.get_my_units()
         enemy_units = self.get_enemy_units()
-
         #TODO: Create priority kill system
         target = enemy_units[0]
-
+        for unit in my_units:
+            if self.get_tile((unit.pos.x, unit.pos.y)).type == "BLANK":
+                raise Exception("Why is a unit position considered empty?")
         attack_path = self.attack_path(my_units[0], (target.pos.x, target.pos.y))
 
         #decision = [{
         d = [{
             "priority": i+1,
-            "movement": ["UP"]*my_units[i].speed,
+            "movement": self.clean_path((my_units[i].pos.x, my_units[i].pos.y), ["UP"]*my_units[i].speed),
             "attack": "STAY",
             "unitId": my_units[i].id
             } for i in range(len(my_units))]
 
-        if attack_path is not None:
-            path, direction = attack_path
-            d[0]["movement"] = path
-            d[0]["attack"] = direction
+        # CHOOSE A PATH
+        if self.player_id == 1:
+            if random.randint(0, 1):
+                path = ["DOWN", "RIGHT", "DOWN", "RIGHT", "DOWN", "RIGHT", "DOWN", "RIGHT","DOWN", "RIGHT"]
+            else:
+                path = ["RIGHT", "DOWN", "RIGHT", "DOWN", "RIGHT", "DOWN", "RIGHT", "DOWN", "RIGHT", "DOWN"]
+        elif self.player_id == 2:
+            if random.randint(0, 1):
+                path = ["UP", "LEFT", "UP", "LEFT", "UP", "LEFT", "UP", "LEFT", "UP", "LEFT", "UP", "LEFT"]
+            else:
+                path = ["LEFT", "UP", "LEFT", "UP", "LEFT", "UP", "LEFT", "UP", "LEFT", "UP", "LEFT", "UP"]
+        else:
+            path = None
+            raise Exception("wat")
+        # END CHOOSE A PATH
+
+        for z in range(len(my_units)):
+            d[z]["priority"] = 3-z # reverse priority
+
+        for z in range(len(my_units)):
+            d[z]["movement"] = \
+                self.clean_path(
+                    (my_units[z].pos.x, my_units[z].pos.y),
+                    path[:my_units[z].speed]
+                )
+#        if attack_path is not None:
+#            path, direction = attack_path
+#            d[0]["movement"] = path
+#            d[0]["attack"] = direction
+#        else:
+#            if self.player_id == 1:
+#                d[0]["movement"] = ["DOWN", "RIGHT", "DOWN", "RIGHT"]
+#                d[0]["attack"] = "STAY"
+#            else:
+#                d[0]["movement"] = ["UP", "LEFT", "DOWN", "RIGHT"]
+#                d[0]["attack"] = "STAY"
 
         #d[0]["priority"], d[2]["priority"] = d[2]["priority"], d[0]["priority"]
 
@@ -163,6 +195,31 @@ class Strategy(Game):
             dest = random.choice(possible_dests)
             return (self.path_to(player, dest[0]), dest[1])
 
+    # make sure that the path is clear
+    def clean_path(self, player_pos, path):
+        clean_path = list()
+        bad = False
+        loc = player_pos
+        for direction in path:
+            if bad is True:
+                clean_path.append("STAY")
+                continue
+            if direction == "RIGHT":
+                loc = (loc[0]+1, loc[1])
+            elif direction == "LEFT":
+                loc = (loc[0]-1, loc[1])
+            elif direction == "UP":
+                loc = (loc[0], loc[1]+1)
+            elif direction == "DOWN":
+                loc = (loc[0], loc[1]-1)
+            if 0 <= loc[0] <= 11 and 0 <= loc[1] <= 11 and self.get_tile(loc).type == "BLANK":
+                clean_path.append(direction)
+            else:
+                clean_path.append("STAY")
+                bad = True
+        return clean_path
+
+
     # given a player, finds all possible locations he can move to
     def possible_destinations(self, player):
         pos = (player.pos.x, player.pos.y)
@@ -172,7 +229,8 @@ class Strategy(Game):
         all_locs = list()
         for col in map:
             for spot in col:
-                if self.path_to(spot, (player.pos.x, player.pos.y)) is None:
+                path = self.path_to(spot, (player.pos.x, player.pos.y))
+                if path is not None and len(path) > player.speed:
                     all_locs.append(spot)
         return all_locs
 
