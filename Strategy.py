@@ -17,21 +17,28 @@ class Strategy(Game):
         If player_id is 1, UnitIds for the bots should be 1,2,3. If player_id is 2, UnitIds should be 4,5,6
     """
     def get_setup(self):
-        units = []
+        units = list()
+
+        # generate our units (BASE STUFF THAT HAS TO EXIST)
         for i in range(3):
-            unit = {"health": 5, "speed": 5}
-            unit["attackPattern"] = [[0] * 7 for j in range(7)]
-            # if you are player1, unitIds will be 1,2,3. If you are player2, they will be 4,5,6
-            unit["unitId"] = i + 1
-            if self.player_id == 2:
-                unit["unitId"] += 3
-            unit["terrainPattern"] = [[False]*7 for j in range(7)]
-            # These sample bot will do damage to the tiles to its left, right, and up. And build terrain behind it
-            unit["attackPattern"][3][2] = 2
-            unit["attackPattern"][2][3] = 2
-            unit["attackPattern"][4][2] = 2
-            unit["terrainPattern"][3][2] = True
+            unit = dict()
+            unit["attackPattern"] = [[0]*7 for _ in range(7)]
+            if self.player_id == 1:
+                unit["unitId"] = i+1
+            else:
+                unit["unitId"] = i+4
+            unit["terrainPattern"] = [[False]*7 for _ in range(7)]
             units.append(unit)
+
+        jonah = units[0]
+        wyly = units[1]
+        obama = units[2]
+
+        # set health and speed
+        for i in range(3):
+            units[i]["health"] = 3
+            units[i]["speed"] = 3
+
         return units
 
     """
@@ -47,10 +54,39 @@ class Strategy(Game):
     """
     def do_turn(self):
         my_units = self.get_my_units()
-        decision = [{
-            "priority": i+1,
-            "movement": ["DOWN"]*my_units[i].speed,
+
+        for unit in my_units:
+            if unit.id == 0 or 3:
+                jonah = unit
+            elif unit.id == 1 or unit.id == 4:
+                wyly = unit
+            else:
+                obama = unit
+
+        decision = list()
+
+        jonah_decision = {
+            "priority": 1,
+            "movement": ["DOWN"]*jonah.speed,
             "attack": "DOWN",
-            "unitId": my_units[i].id
-            } for i in range(len(my_units))]
+            "unitId": jonah.id
+        }
+
+        wyly_decision = {
+            "priority": 2,
+            "movement": ["DOWN"]*wyly.speed,
+            "attack": "DOWN",
+            "unitId": wyly.id
+        }
+
+        obama_decision = {
+            "priority": 3,
+            "movement": ["DOWN"]*obama.speed,
+            "attack": "DOWN",
+            "unitId": obama.id
+        }
+
+        decision.append(jonah_decision)
+        decision.append(wyly_decision)
+        decision.append(obama_decision)
         return decision
