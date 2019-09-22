@@ -1,5 +1,4 @@
 from API import Game
-import sys
 
 class Strategy(Game):
 
@@ -32,7 +31,6 @@ class Strategy(Game):
         units = []
 
         def create_glass_cannon(player_1_team, player_2_team):
-            print("creating glass cannon robot", file=sys.stderr)
             gc = {}            
 
             atk = \
@@ -52,7 +50,6 @@ class Strategy(Game):
             return gc
 
         def create_balanced(player_1_team, player_2_team):
-            print("creating balanced robot", file=sys.stderr)
             u = {}
 
             # 4 attack (10 pts)
@@ -78,7 +75,6 @@ class Strategy(Game):
             return u
 
         def create_scattershot(player_1_team, player_2_team):
-            print("creating scattershot robot", file=sys.stderr)
             u = {}
 
             atk = \
@@ -109,7 +105,6 @@ class Strategy(Game):
             return u
 
         def create_wyly_flakbot(player_1_team, player_2_team):
-            print("creating 'Wyly Flakbot' robot", file=sys.stderr)
             u = {}
 
             atk = \
@@ -133,7 +128,6 @@ class Strategy(Game):
             return u
 
         def create_wyly_flakbot_center(player_1_team, player_2_team):
-            print("creating 'Wyly Flakbot Center' robot", file=sys.stderr)
             u = {}
 
             atk = \
@@ -157,7 +151,6 @@ class Strategy(Game):
             return u
 
         def create_wyly_flakbot_left(player_1_team, player_2_team):
-            print("creating 'Wyly Flakbot Left' robot", file=sys.stderr)
             u = {}
 
             atk = \
@@ -181,7 +174,6 @@ class Strategy(Game):
             return u
 
         def create_wyly_flakbot_right(player_1_team, player_2_team):
-            print("creating 'Wyly Flakbot Right' robot", file=sys.stderr)
             u = {}
 
             atk = \
@@ -231,9 +223,6 @@ class Strategy(Game):
     """
     def do_turn(self):
 
-        print('Debug: player ' + str(self.player_id), file=sys.stderr)
-        print("    STATE: " + self.STATE, file=sys.stderr)
-        print("    Turn #" + str(self.CURRENT_TURN), file=sys.stderr)
 
         self.CURRENT_TURN += 1
 
@@ -296,7 +285,7 @@ class Strategy(Game):
 
                 d.append(o)
 
-            print(str(d), file=sys.stderr)
+            d = self.clean_final_decision(d)
             self.STATE = "barrage"
             return d
 
@@ -327,7 +316,7 @@ class Strategy(Game):
 
             self.STATE = "move_center"
 
-            print(str(d), file=sys.stderr)
+            d = self.clean_final_decision(d)
             return d
 
         elif self.STATE == "move_center":
@@ -355,7 +344,7 @@ class Strategy(Game):
 
             self.STATE = "barrage"
 
-            print(str(d), file=sys.stderr)
+            d = self.clean_final_decision(d)
             return d
 
         elif self.STATE == "barrage":
@@ -377,8 +366,7 @@ class Strategy(Game):
                     #d[ind]["movement"][0] = "DOWN"
                     #d[ind]["movement"][1] = "UP"
 
-                print(str(d), file=sys.stderr)
-                                
+                d = self.clean_final_decision(d)
                 #return 1/0
                 return d
 
@@ -393,7 +381,7 @@ class Strategy(Game):
                         "unitId": my_units[ind].id
                     })
 
-                print(str(d), file=sys.stderr)
+                d = self.clean_final_decision(d)
                 return d
 
         elif self.STATE == "prep_scatter":
@@ -421,7 +409,7 @@ class Strategy(Game):
                     "unitId": 2
                 }]
 
-                print(str(d), file=sys.stderr)
+                d = self.clean_final_decision(d)
                 self.STATE = "move_scatter"
                 return d
 
@@ -446,7 +434,7 @@ class Strategy(Game):
                     "unitId": 5
                 }]
 
-                print(str(d), file=sys.stderr)
+                d = self.clean_final_decision(d)
                 self.STATE = "move_scatter"
                 return d
 
@@ -473,7 +461,7 @@ class Strategy(Game):
                     "unitId": 2
                 }]
 
-                print(str(d), file=sys.stderr)
+                d = self.clean_final_decision(d)
                 return d
 
             else:
@@ -497,7 +485,7 @@ class Strategy(Game):
                     "unitId": 5
                 }]
 
-                print(str(d), file=sys.stderr)
+                d = self.clean_final_decision(d)
                 return d
 
         elif self.STATE == "prep_wyly_flakbot":
@@ -523,8 +511,8 @@ class Strategy(Game):
                     "unitId": 2
                 }]
 
+                d = self.clean_final_decision(d)
                 self.STATE = "move_wyly_flakbot"
-                print(str(d), file=sys.stderr)
                 return d
 
             else:
@@ -548,8 +536,8 @@ class Strategy(Game):
                     "unitId": 5
                 }]
 
+                d = self.clean_final_decision(d)
                 self.STATE = "move_wyly_flakbot"
-                print(str(d), file=sys.stderr)
                 return d
 
         elif self.STATE == "move_wyly_flakbot":
@@ -590,7 +578,7 @@ class Strategy(Game):
 
                         ind["movement"] = ["STAY"]
 
-                print(str(d), file=sys.stderr)
+                d = self.clean_final_decision(d)
                 return d
 
             else:
@@ -629,7 +617,7 @@ class Strategy(Game):
 
                         ind["movement"] = ["STAY"]
 
-                print(str(d), file=sys.stderr)
+                d = self.clean_final_decision(d)
                 return d
         else:
             print('#### Unknown state')
@@ -684,16 +672,63 @@ class Strategy(Game):
 
         return attacking_squares
 
-    # get a destination path of up, left, down, right pattern to attack a given target
-    # returns a tuple where dest[0] is the destination path and dest[1] is the attack direction to do
-    def attack_path(self, player, target_pos):
-        possible_dests = self.attacking_tiles(player, target_pos)
-        if possible_dests is None or len(possible_dests) == 0:
-            return None
-        else:
-            dest = random.choice(possible_dests)
-            return (self.path_to(player, dest[0]), dest[1])
 
+    def clean_final_decision(self, decision_list):
+        clean_error = False
+        my_units = self.get_my_units()
+        if len(decision_list) != len(my_units):
+            clean_error = True
+            print("decision list doesn't match total units.")
+
+        priorities = list()
+        movements = list()
+        attacks = list()
+        unitIds = list()
+
+        for decision in decision_list:
+            for req in {"priority", "movement", "attack", "unitId"}:
+                if req not in decision:
+                    clean_error = True
+                    break
+
+            # individual cleaning
+            if decision["unitId"] < 1 or decision["unitId"] > 6 or decision["unitId"] in unitIds:
+                clean_error = True
+                for id in {1, 2, 3}:
+                    if self.player_id == 2:
+                        id += 3
+                    if id not in unitIds:
+                        decision["unitId"] = id
+                        break
+
+            unit = self.get_unit(decision["unitId"])
+            if unit is None:
+                raise Exception("get unit is hard")
+
+            if decision["priority"] < 1 or len(my_units) < decision["priority"] or decision["priority"] in priorities:
+                clean_error = True
+                for pri in {1, 2, 3}:
+                    if pri not in priorities:
+                        decision["priority"] = pri
+                        break
+
+            if len(decision["movement"]) < 1 or len(decision["movement"]) > unit.speed:
+                clean_error = True
+                path = ["STAY"] * unit.speed
+                decision["movement"] = path
+
+            if decision["attack"] not in {"LEFT", "RIGHT", "UP", "DOWN", "STAY"}:
+                decision["attack"] = "STAY"
+
+            # group cleaning (and below)
+            priorities.append(decision["priority"])
+            movements.append(decision["movement"])
+            attacks.append(decision["attack"])
+            unitIds.append(decision["unitId"])
+
+
+
+        return decision_list
     # make sure that the path is clear
     def clean_path(self, player_pos, path, friendly_locs=None):
 
@@ -772,15 +807,3 @@ class Strategy(Game):
 
         return attacking_squares
 
-    # find positions on the board where the player can escape to to AVOID the target at ALL COSTS
-    def super_avoid(self, player, target, attacking_squares=None):
-        if attacking_squares is None:
-            attacking_squares = self.super_attacking_squares(target)
-
-        all_locs = self.possible_destinations(player)
-        possible_locs = copy.copy(all_locs)
-        for sqr in attacking_squares:
-            if sqr in all_locs:
-                possible_locs.remove(sqr)
-
-        return possible_locs
