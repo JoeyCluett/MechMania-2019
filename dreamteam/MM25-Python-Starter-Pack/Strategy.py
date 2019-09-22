@@ -8,7 +8,11 @@ class Strategy(Game):
         #self.STATE = "barrage"
         #self.STATE = "advance_one"
         #self.STATE = "prep_scatter"
+        
         self.STATE = "prep_wyly_flakbot"
+        self.wyly_squares = 0
+
+        self.inner_squares = 0
 
         self.CURRENT_TURN = 0
         Game.__init__(self, game_json)
@@ -85,20 +89,20 @@ class Strategy(Game):
                 [[0] * 7 for j in range(7)]
             
             # 9 atk = 9 pts
-            atk[1][4] = 1
-            atk[2][4] = 1
-            atk[3][4] = 1
-            atk[4][4] = 1
-            atk[5][4] = 1
+            atk[1][4] = 1 # 1 pt
+            atk[2][4] = 2 # 3 pts
+            atk[3][4] = 3 # 6 pts
+            atk[4][4] = 2 # 3 pts
+            atk[5][4] = 1 # 1 pt
 
-            atk[2][5] = 1
-            atk[3][5] = 1
-            atk[4][5] = 1
+            atk[2][5] = 1 # 1 pt
+            atk[3][5] = 1 # 1 pt
+            atk[4][5] = 1 # 1 pt
 
-            atk[3][6] = 1
+            atk[3][6] = 1 # 1 pt
 
             u["attackPattern"] = atk
-            u["speed"]  = 6 # 6 spd = 9 pts
+            u["speed"]  = 1 # 0 pts
             u["health"] = 5 # 5 hlth = 6 pts
             u["terrainPattern"] = [[False]*7 for j in range(7)]
 
@@ -212,9 +216,14 @@ class Strategy(Game):
         #units.append(create_wyly_flakbot(2, 5))
         #units.append(create_wyly_flakbot(3, 6))
 
-        units.append(create_wyly_flakbot_center(1, 4))
-        units.append(create_wyly_flakbot_left(2, 5))
-        units.append(create_wyly_flakbot_right(3, 6))
+        #units.append(create_wyly_flakbot_center(1, 4))
+        #units.append(create_wyly_flakbot_left(2, 5))
+        #units.append(create_wyly_flakbot_right(3, 6))
+
+        units.append(create_scattershot(1, 4))
+        units.append(create_scattershot(2, 5))
+        units.append(create_scattershot(3, 6))
+
 
         return units
 
@@ -523,7 +532,8 @@ class Strategy(Game):
                     "unitId": 2
                 }]
 
-                self.STATE = "move_wyly_flakbot"
+                #self.STATE = "move_wyly_flakbot"
+                self.STATE = "move_wyly_to_center"
                 print(str(d), file=sys.stderr)
                 return d
 
@@ -548,11 +558,62 @@ class Strategy(Game):
                     "unitId": 5
                 }]
 
-                self.STATE = "move_wyly_flakbot"
+                #self.STATE = "move_wyly_flakbot"
+                self.STATE = "move_wyly_to_center"
                 print(str(d), file=sys.stderr)
                 return d
 
+        elif self.STATE == "move_wyly_to_center":
+
+            if self.player_id == 1:
+                
+                d = []
+                p_list = [ 3, 1, 2 ]
+
+                if self.wyly_squares < 5:
+                    
+                    for i in range(3):
+                        d.append({
+                            "priority": i+1,
+                            "movement": ["DOWN"],
+                            "attack": "RIGHT",
+                            "unitId": p_list[i]
+                        })
+
+                    self.wyly_squares += 1
+                    return d
+
+                else: 
+                    self.STATE = "move_wyly_flakbot"
+                    return self.do_turn()
+
+            else:
+
+                d = []
+                p_list = [ 6, 4, 5 ]
+
+                if self.wyly_squares < 5:
+
+                    for i in range(3):
+                        d.append({
+                            "priority": i+1,
+                            "movement": ["UP"],
+                            "attack": "LEFT",
+                            "unitId": p_list[i]
+                        })
+
+                    self.wyly_squares += 1
+                    return d
+
+                else: 
+                    self.STATE = "move_wyly_flakbot"
+                    return self.do_turn()
+
         elif self.STATE == "move_wyly_flakbot":
+
+            self.inner_squares += 1
+            if self.inner_squares > 4:
+                self.STATE = "loiter_center"
 
             if self.player_id == 1:
 
@@ -574,12 +635,18 @@ class Strategy(Game):
                 for bot in self.get_my_units():
                     if bot.id == 1:
                         pos = (bot.pos.x, bot.pos.y)
+                        break
                     elif bot.id == 3:
                         pos = (bot.pos.x, bot.pos.y-1)
+                        break
                     elif bot.id == 2:
                         pos = (bot.pos.x, bot.pos.y+1)
+                        break
 
+                """
                 if not self.wyly_flakbot_can_move(pos, "RIGHT"):
+                    
+                    print("\t-- UNABLE TO MOVE RIGHT", file=sys.stderr)
 
                     for ind in d:
                         if ind["unitId"] == 3:
@@ -589,6 +656,7 @@ class Strategy(Game):
                             ind["attack"] = "DOWN"
 
                         ind["movement"] = ["STAY"]
+                """
 
                 print(str(d), file=sys.stderr)
                 return d
@@ -613,11 +681,15 @@ class Strategy(Game):
                 for bot in self.get_my_units():
                     if bot.id == 4:
                         pos = (bot.pos.x, bot.pos.y)
+                        break
                     elif bot.id == 6:
                         pos = (bot.pos.x, bot.pos.y-1)
+                        break
                     elif bot.id == 5:
                         pos = (bot.pos.x, bot.pos.y+1)
+                        break
 
+                """
                 if not self.wyly_flakbot_can_move(pos, "LEFT"):
 
                     for ind in d:
@@ -628,15 +700,48 @@ class Strategy(Game):
                             ind["attack"] = "UP"
 
                         ind["movement"] = ["STAY"]
+                """
 
                 print(str(d), file=sys.stderr)
                 return d
+        
+        elif self.STATE == "loiter_center":
+
+            d = []
+
+            """
+            dir_map = {
+                2 : "UP",
+                1 : "RIGHT",
+                3 : "DOWN",
+                6 : "UP",
+                4 : "LEFT",
+                5 : "DOWN"
+            }
+            """
+
+            strat_list = [ "", "RIGHT", "UP", "DOWN", "LEFT", "DOWN", "UP" ]
+
+            pr = 0
+            for i in self.get_my_units():
+                d.append({
+                    "priority": pr+1,
+                    "movement": ["STAY"],
+                    "attack": strat_list[i.id],
+                    "unitId": i.id
+                })
+
+                pr += 1
+        
+            print(str(d), file=sys.stderr)
+            return d
+
         else:
             print('#### Unknown state')
             raise Exception("If you see this message, something went wrong")
     
-    def wyly_flakbot_can_move(self, pos, dir):
-        if dir == "UP":
+    def wyly_flakbot_can_move(self, pos, dir_):
+        if dir_ == "UP":
             return \
                 self.get_unit_at((pos[0]-1, pos[1]+1)) is None and \
                 self.get_unit_at((pos[0]+0, pos[1]+1)) is None and \
@@ -644,7 +749,7 @@ class Strategy(Game):
                 self.get_tile((pos[0]-1, pos[1]+1)).hp == 0 and \
                 self.get_tile((pos[0]+0, pos[1]+1)).hp == 0 and \
                 self.get_tile((pos[0]+1, pos[1]+1)).hp == 0
-        elif dir == "LEFT":
+        elif dir_ == "LEFT":
             return \
                 self.get_unit_at((pos[0]-1, pos[1]+1)) is None and \
                 self.get_unit_at((pos[0]-1, pos[1]+0)) is None and \
@@ -652,7 +757,7 @@ class Strategy(Game):
                 self.get_tile((pos[0]-1, pos[1]+1)).hp == 0 and \
                 self.get_tile((pos[0]-1, pos[1]+0)).hp == 0 and \
                 self.get_tile((pos[0]-1, pos[1]-1)).hp == 0
-        elif dir == "RIGHT":
+        elif dir_ == "RIGHT":
             return \
                 self.get_unit_at((pos[0]+1, pos[1]+1)) is None and \
                 self.get_unit_at((pos[0]+1, pos[1]+0)) is None and \
@@ -660,7 +765,7 @@ class Strategy(Game):
                 self.get_tile((pos[0]+1, pos[1]+1)).hp == 0 and \
                 self.get_tile((pos[0]+1, pos[1]+0)).hp == 0 and \
                 self.get_tile((pos[0]+1, pos[1]-1)).hp == 0
-        elif dir == "DOWN":
+        elif dir_ == "DOWN":
             return \
                 self.get_unit_at((pos[0]-1, pos[1]-1)) is None and \
                 self.get_unit_at((pos[0]+0, pos[1]-1)) is None and \
